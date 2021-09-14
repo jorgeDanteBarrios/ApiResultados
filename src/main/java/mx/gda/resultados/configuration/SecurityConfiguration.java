@@ -1,7 +1,5 @@
 package mx.gda.resultados.configuration;
 
-import java.util.Collections;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -49,8 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-	
+	s
 	 @Bean
 	  public CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -64,18 +61,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	    return (CorsConfigurationSource)source;
 	  }
 	
-	/*
-	  @Bean
-	  public CorsFilter corsFilter() {
-	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	    CorsConfiguration config = new CorsConfiguration();
-	    config.setAllowCredentials(Boolean.valueOf(true));
-	    //config.addAllowedOrigin("*");
-	    config.setAllowedOrigins(Collections.singletonList("*"));
-	    config.addAllowedHeader("*");
-	    config.addAllowedMethod("*");
-	    source.registerCorsConfiguration("/**", config);
-	    return new CorsFilter((CorsConfigurationSource)source);
-	  }
-*/
 }
