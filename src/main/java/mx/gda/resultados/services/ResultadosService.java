@@ -73,7 +73,7 @@ public class ResultadosService {
 		if (tmp.isGenerado().booleanValue()) {
 			salida = Base64.getDecoder().decode(tmp.getArchivoBase64().getValue());
 		} else {
-			RespReporte tmpSwiss = consulta_WsSwiss(orden, logo);
+			wsclient.swiss.RespReporte tmpSwiss = consulta_WsSwiss(orden, logo);
 			this.logger.debug("Consulta WS_Swiss");
 			if (tmpSwiss.isGenerado().booleanValue())
 				salida = Base64.getDecoder().decode(tmpSwiss.getArchivoBase64().getValue());
@@ -84,15 +84,19 @@ public class ResultadosService {
 	/* Método para obtener el PDF de resultados de labcore Azteca */
 	public byte[] getResultado_WsAzteca(String orden, Integer opcion) throws Exception {
 		byte[] salida = null;
-		Boolean logo = Boolean.valueOf(false);
-		if (opcion.intValue() >= 1)
-			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsAzteca [{},{}]", orden, opcion);
+		Boolean logo =false;
+		logger.info(" Se consume método:  getResultado_WsAzteca ");
+		logger.debug("Orden  : {}",orden);
+		logger.debug("Opcion : {}",opcion);
+		if (opcion.intValue() >= 1) {
+			logo=true;
+		}			
 		RespReporte tmp = consulta_WsAzteca(orden, logo);
-		if (tmp.isGenerado().booleanValue()) {
+		logger.debug("Mensaje Respuesta Azteca (generado): {}", tmp.isGenerado().booleanValue());
+		if (tmp.isGenerado().booleanValue()) {			
 			salida = Base64.getDecoder().decode(tmp.getArchivoBase64().getValue());
 		} else {
-			this.logger.debug("Mensaje Respuesta Azteca: {}", tmp.getMensaje().getValue());
+			logger.info("Mensaje Respuesta Azteca (mensaje): {}", tmp.getMensaje().getValue());
 			salida = Base64.getDecoder().decode(this.PDF_ERROR);
 		}
 		return salida;
@@ -101,15 +105,19 @@ public class ResultadosService {
 	/* Método para obtener el PDF de resultados de labcore Swiss */
 	public byte[] getResultado_WsSwiss(String orden, Integer opcion) throws Exception {
 		byte[] salida = null;
-		Boolean logo = Boolean.valueOf(false);
-		if (opcion.intValue() >= 1)
-			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsSwiss [{},{}]", orden, opcion);
-		RespReporte tmp = consulta_WsSwiss(orden, logo);
-		if (tmp.isGenerado().booleanValue()) {
+		Boolean logo=false;
+		logger.info(" Se consume método:  getResultado_WsSwiss ");
+		logger.debug("Orden  : {}",orden);
+		logger.debug("Opcion : {}",opcion);
+		if (opcion.intValue() >= 1) {
+			logo=true;
+		}	
+		wsclient.swiss.RespReporte tmp = consulta_WsSwiss(orden, logo);
+		logger.info("Mensaje Respuesta Swiss (generado): {}", tmp.isGenerado().booleanValue());
+		if (tmp.isGenerado().booleanValue()) {			
 			salida = Base64.getDecoder().decode(tmp.getArchivoBase64().getValue());
 		} else {
-			this.logger.info("Mensaje Respuesta Swiss: {}", tmp.getMensaje().getValue());
+			logger.info("Mensaje Respuesta Swiss (mensaje): {}", tmp.getMensaje().getValue());
 			salida = Base64.getDecoder().decode(this.PDF_ERROR);
 		}
 		return salida;
@@ -118,15 +126,19 @@ public class ResultadosService {
 	/* Método para obtener el PDF de resultados de labcore Nova */
 	public byte[] getResultado_WsNova(String orden, Integer opcion) throws Exception {
 		byte[] salida = null;
-		Boolean logo = Boolean.valueOf(false);
-		if (opcion.intValue() >= 1)
-			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsNova [{},{}]", orden, opcion);
-		RespReporte tmp = consulta_WsNova(orden, logo);
+		logger.info(" Se consume método:  getResultado_WsNova ");
+		logger.debug("Orden  : {}",orden);
+		logger.debug("Opcion : {}",opcion);
+		Boolean logo=false;
+		if (opcion.intValue() >= 1) {
+			logo=true;
+		}
+		wsclient.nova.RespReporte tmp = consulta_WsNova(orden, logo);
+		logger.info("Mensaje Respuesta Nova (generado): {}", tmp.isGenerado().booleanValue());
 		if (tmp.isGenerado().booleanValue()) {
 			salida = Base64.getDecoder().decode(tmp.getArchivoBase64().getValue());
 		} else {
-			this.logger.debug("Mensaje Respuesta Nova: {}", tmp.getMensaje().getValue());
+			logger.info("Mensaje Respuesta Nova (mensaje): {}", tmp.getMensaje().getValue());
 			salida = Base64.getDecoder().decode(this.PDF_ERROR);
 		}
 		return salida;
@@ -134,40 +146,64 @@ public class ResultadosService {
 
 	/* Método para obtener el PDF  en base64 de resultados de labcore Azteca */
 	public String getResBase64_WsAzteca(String orden, Integer opcion) throws Exception {
-		String salida = null;
-		Boolean logo = Boolean.valueOf(false);
-		if (opcion.intValue() >= 1)
-			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsAzteca [{},{}]", orden, opcion);
+		String salida= null;
+		Boolean logo=false;
+		logger.info(" Se consume método:  getResBase64_WsAzteca ");
+		logger.debug("Orden  : {}",orden);
+		logger.debug("Opcion : {}",opcion);
+		if (opcion.intValue() >= 1) {
+			logo =true;
+		}		
 		RespReporte tmp = consulta_WsAzteca(orden, logo);
-		if (tmp.isGenerado().booleanValue())
+		logger.debug("Mensaje Respuesta Azteca (generado): {}", tmp.isGenerado().booleanValue());
+		if (tmp.isGenerado().booleanValue()) {
 			salida = tmp.getArchivoBase64().getValue();
+		}else {
+			logger.error("Sin datos [getResBase64_WsAzteca]: Validar el número de orden y/o que los resultados esten liberados");
+			throw new ResponseStatusException(HttpStatus.NO_CONTENT,"Validar el número de orden y/o que los resultados esten liberados");
+		}
 		return salida;
 	}
 
 	/* Método para obtener el PDF  en base64 de resultados de labcore Swiss */
 	public String getResBase64_WsSwiss(String orden, Integer opcion) throws Exception {
 		String salida = null;
-		Boolean logo = Boolean.valueOf(false);
-		if (opcion.intValue() >= 1)
-			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsSwiss [{},{}]", orden, opcion);
-		RespReporte tmp = consulta_WsSwiss(orden, logo);
-		if (tmp.isGenerado().booleanValue())
+		Boolean logo=false;
+		logger.info(" Se consume método:  getResBase64_WsAzteca ");
+		logger.debug("Orden  : {}",orden);
+		logger.debug("Opcion : {}",opcion);
+		if (opcion.intValue() >= 1) {
+			logo=true;
+		}
+		wsclient.swiss.RespReporte tmp = consulta_WsSwiss(orden, logo);
+		logger.debug("Mensaje Respuesta Swiss (generado): {}", tmp.isGenerado().booleanValue());
+		if (tmp.isGenerado().booleanValue()) {
 			salida = tmp.getArchivoBase64().getValue();
+		}else {
+			logger.error("Sin datos [getResBase64_WsSwiss]: Validar el número de orden y/o que los resultados esten liberados");
+			throw new ResponseStatusException(HttpStatus.NO_CONTENT,"Validar el número de orden y/o que los resultados esten liberados");
+		}
 		return salida;
 	}
 	
 	/* Método para obtener el PDF  en base64 de resultados de labcore Nova */
 	public String getResBase64_WsNova(String orden, Integer opcion) throws Exception {
 		String salida = null;
-		Boolean logo = Boolean.valueOf(false);
-		if (opcion.intValue() >= 1)
-			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsNova [{},{}]", orden, opcion);
-		RespReporte tmp = consulta_WsNova(orden, logo);
-		if (tmp.isGenerado().booleanValue())
+		Boolean logo=false;
+		logger.info(" Se consume método:  getResBase64_WsNova ");
+		logger.debug("Orden  : {}",orden);
+		logger.debug("Opcion : {}",opcion);
+		if (opcion.intValue() >= 1) {
+			logo=true;
+		}
+		wsclient.nova.RespReporte tmp = consulta_WsNova(orden, logo);
+		logger.debug("Mensaje Respuesta Nova (generado): {}", tmp.isGenerado().booleanValue());
+		if (tmp.isGenerado().booleanValue()) {
 			salida = tmp.getArchivoBase64().getValue();
+		}else {
+			logger.error("Sin datos [getResBase64_WsNova]: Validar el número de orden y/o que los resultados esten liberados");
+			throw new ResponseStatusException(HttpStatus.NO_CONTENT,"Validar el número de orden y/o que los resultados esten liberados");
+		}
 		return salida;
 	}
 
@@ -177,31 +213,34 @@ public class ResultadosService {
 		byte[] tmp = null;
 		byte[] salida = null;
 		Path path = null;
+		logger.info(" Se consume método:  getResBase64_WsNova ");
+		logger.debug("kevento : {}",kevento);
+		logger.debug("Opcion  : {}",opcion);
 		ordenes = getOrdenesByEvento(kevento);
 		if (ordenes != null && ordenes.size() >= 1) {
 			String tmpdir = System.getProperty("java.io.tmpdir");
 			path = Paths.get(tmpdir, new String[0]);
 			File tmpFile = path.resolve(generaNombreCarpeta()).toFile();
 			if (!tmpFile.mkdir()) {
-				this.logger.error("Error al generar la carpeta temporal");
+				logger.error("[getResultadosByEvento] Error al generar la carpeta temporal");
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
 						"Error al generar los archivos temporales");
 			}
-			this.logger.debug(" Se crela cartpeta en {}", tmpFile.getAbsolutePath());
+			logger.debug("[getResultadosByEvento] Se crea cartpeta en {}", tmpFile.getAbsolutePath());
 			for (Orden o : ordenes) {
 				try {
 					tmp = getResultado(o.getOrden(), opcion);
 					if (tmp != null)
 						createPDF(tmp, o.getNombrePx(), tmpFile.toPath());
 				} catch (Exception e) {
-					this.logger.error("Error al consultar la orden {}", o);
+					logger.error("[getResultadosByEvento] Error al consultar la orden {}", o);
 					e.printStackTrace();
 				}
 			}
 			salida = generaZip(tmpFile.toPath(), kevento.toString());
 		} else {
-			throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,
-					"No se encontraron ordenes con resultados");
+			logger.error("Sin datos [getResultadosByEvento]: No se encontraron ordenes con resultados");
+			throw new ResponseStatusException(HttpStatus.NO_CONTENT,"No se encontraron ordenes con resultados");
 		}
 		return salida;
 	}
@@ -215,12 +254,15 @@ public class ResultadosService {
 	public String getResultado(Long kordensucursal, Integer opcion) throws Exception {
     String salida = null;
     List<String> tmpResultados = null;
+    logger.info(" Se consume método:  getResultado ");
+	logger.debug("kordensucursal : {}",kordensucursal);
+	logger.debug("Opcion         : {}",opcion);
     TordenSucursal tordenSucursal = consultaOrden(kordensucursal);
     if (tordenSucursal != null) {
       if (tordenSucursal.getCestadoRegistro().longValue() != 17L) {
         if (tordenSucursal.getCmarca().equals(Integer.valueOf(6)) || tordenSucursal.getCmarca().equals(Integer.valueOf(14))) {
-          this.logger.error("Error en mgetResultado2: Marca no operativa, favor de validar la informaci, tordenSucursal.getCmarca()");
-          throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Marca no operativa, favor de validar la información");
+          logger.error("Error en getResultado: Marca no operativa {}, favor de validar la información", tordenSucursal.getCmarca());
+          throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Marca no operativa, favor de validar la información");
         } 
         if (tordenSucursal.getCmarca().equals(Integer.valueOf(5))) {
           tmpResultados = getResultadosMarcaSwiss(tordenSucursal, opcion);
@@ -229,18 +271,18 @@ public class ResultadosService {
         } else if (tordenSucursal.getCmarca().equals(Integer.valueOf(4)) || tordenSucursal.getCmarca().equals(Integer.valueOf(7)) || tordenSucursal.getCmarca().equals(Integer.valueOf(1)) || tordenSucursal.getCmarca().equals(Integer.valueOf(2)) || tordenSucursal.getCmarca().equals(Integer.valueOf(3))) {
           tmpResultados = getResultadosMarcasCDMX(tordenSucursal, opcion);
         } else {
-          this.logger.error("Error en mgetResultado2: Sin reglas definidas para consulta de resultados para la marca {}", tordenSucursal.getCmarca());
-          throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Sin reglas definidas para consulta de resultados para esta marca");
+          logger.error("Error en getResultado: Sin reglas definidas para consulta de resultados para la marca {}", tordenSucursal.getCmarca());
+          throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Sin reglas definidas para consulta de resultados para esta marca");
         } 
       } else {
-        this.logger.error("Error en mgetResultado2: Orden cancelada");
-        throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Orden cancelada");
+        logger.error("Error en getResultado: Orden cancelada");
+        throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Orden cancelada");
       } 
     } else {
-      this.logger.error("Error en mgetResultado2: kordensucursal no encontrada");
-      throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, " La orden  no existe ");
+      logger.error("Error en getResultado: kordensucursal no encontrada");
+      throw new ResponseStatusException(HttpStatus.NO_CONTENT, " La orden  no existe ");
     } 
-    this.logger.debug(">>> No. de PDF's {}", Integer.valueOf(tmpResultados.size()));
+    logger.debug(">>> No. de PDF's {}", Integer.valueOf(tmpResultados.size()));
     salida = combinePDFs(tmpResultados);
     return salida;
   }
@@ -286,6 +328,7 @@ public class ResultadosService {
 	/* Método para combinar los PDF's (cadenas en base64) */
 	private String combinePDFs(List<String> resultados) {
 		String salida = null;
+		logger.info(" Se consume método:  combinePDFs ");
 		try {
 			if (resultados != null)
 				if (resultados.size() > 1) {
@@ -304,7 +347,7 @@ public class ResultadosService {
 					salida = resultados.get(0);
 				}
 		} catch (Exception e) {
-			this.logger.error("Error en mcombinePDFs : {}", e.getMessage());
+			logger.error("Error en mcombinePDFs : {}", e.getMessage());
 		}
 		return salida;
 	}
@@ -322,7 +365,7 @@ public class ResultadosService {
 		while (i < this.NO_INTENTOS.intValue()) {
 			this.logger.debug("Consulta de WsSwiss, intento: {}", Integer.valueOf(i));
 			try {
-				RespReporte tmpSwiss = consulta_WsSwiss(tordenSucursal.getClaveLabcore(), logo);
+				wsclient.swiss.RespReporte tmpSwiss = consulta_WsSwiss(tordenSucursal.getClaveLabcore(), logo);
 				if (tmpSwiss.isGenerado().booleanValue()) {
 					salida.add(tmpSwiss.getArchivoBase64().getValue());
 					break;
@@ -339,7 +382,7 @@ public class ResultadosService {
 		while (i < this.NO_INTENTOS.intValue()) {
 			this.logger.debug("Consulta de WsNova, intento: {}", Integer.valueOf(i));
 			try {
-				RespReporte tmpNova = consulta_WsNova(tordenSucursal.getClaveLabcore(), logo);
+				wsclient.nova.RespReporte tmpNova = consulta_WsNova(tordenSucursal.getClaveLabcore(), logo);
 				if (tmpNova.isGenerado().booleanValue()) {
 					salida.add(tmpNova.getArchivoBase64().getValue());
 					break;
@@ -517,13 +560,13 @@ public class ResultadosService {
 	}
 
 	/* Método para consultar el servivio de Swiss */
-	private RespReporte consulta_WsSwiss(String orden, Boolean logo) throws Exception {
-		RespReporte salida = null;
+	private wsclient.swiss.RespReporte consulta_WsSwiss(String orden, Boolean logo) throws Exception {
+		wsclient.swiss.RespReporte salida = null;
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		try {
-			Future<RespReporte> futureTask1 = executor.submit(() -> {
-				WsLabCore service = new WsLabCore();
-				IwsReporte port = service.getBasicHttpBindingIwsReporte();
+			Future<wsclient.swiss.RespReporte> futureTask1 = executor.submit(() -> {
+				wsclient.swiss.WsLabCore service = new wsclient.swiss.WsLabCore();
+				wsclient.swiss.IwsReporte port = service.getBasicHttpBindingIwsReporte();
 				return port.getReporte(orden, logo);
 			});
 			salida = futureTask1.get(this.TIME_OUT_SECONDS.intValue(), TimeUnit.SECONDS);
@@ -541,13 +584,13 @@ public class ResultadosService {
 	}
 
 	/* Método para consultar el servivio de Nova*/
-	private RespReporte consulta_WsNova(String orden, Boolean logo) throws Exception {
-		RespReporte salida = null;
+	private wsclient.nova.RespReporte consulta_WsNova(String orden, Boolean logo) throws Exception {
+		wsclient.nova.RespReporte salida = null;
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		try {
-			Future<RespReporte> futureTask1 = executor.submit(() -> {
-				WsLabCore service = new WsLabCore();
-				IwsReporte port = service.getBasicHttpBindingIwsReporte();
+			Future<wsclient.nova.RespReporte> futureTask1 = executor.submit(() -> {
+				wsclient.nova.WsLabCore service = new wsclient.nova.WsLabCore();
+				wsclient.nova.IwsReporte port = service.getBasicHttpBindingIwsReporte();
 				return port.getReporte(orden, logo);
 			});
 			salida = futureTask1.get(this.TIME_OUT_SECONDS.intValue(), TimeUnit.SECONDS);
@@ -654,7 +697,7 @@ public class ResultadosService {
 							" 	eventos.t_orden a, "+
 							" 	public.t_orden_sucursal b "+
 							" where "+
-							" 	a.kevento =? 1 "+
+							" 	a.kevento =?1 "+
 							" 	and a.benviadolabcore = true "+
 							" 	and a.cestatus not in (6,7) "+
 							" 	and b.kordensucursal = a.kordensucursal ");
@@ -727,7 +770,7 @@ public class ResultadosService {
 							" from "+
 							" 	public.t_orden_sucursal b "+
 							" where "+
-							" 	b.kordensucursal =?1 ");
+							" 	b.kordensucursal=?1 ");
 			q.setParameter(1, kordensucursal);
 			@SuppressWarnings("unchecked")
 			List<Object[]> results = q.getResultList();
@@ -762,12 +805,12 @@ public class ResultadosService {
 							" 		public.t_orden_examen_sucursal b, "+
 							" 		web2lablis.c_examen c "+
 							" 	where "+
-							" 		a.kordensucursal = ? 1 "+
+							" 		a.kordensucursal =?1 "+
 							" 		and b.kordensucursal = a.kordensucursal "+
 							" 		and c.cexamen = b.cexamen "+
-							" 		and c.ulaboratoriogabinete = 2 ) "+
+							" 		and c.ulaboratoriogabinete =2 ) "+
 							" 	and b.cdepartamento = a.cdepartamento "+
-							" 	and b.cdepartamento != 133 ");
+							" 	and b.cdepartamento!=133 ");
 			q.setParameter(1, kordensucursal);
 			salida = Integer.valueOf(((Number) q.getSingleResult()).intValue());
 		} catch (Exception e) {

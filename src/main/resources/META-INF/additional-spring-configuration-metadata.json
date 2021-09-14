@@ -1,0 +1,52 @@
+{"properties": [
+  {
+    "name": "spring.boot.admin.client.url",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.client.url'"
+  },
+  {
+    "name": "spring.boot.admin.client.instance.prefer-ip",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.client.instance.prefer-ip'"
+  },
+  {
+    "name": "spring.boot.admin.client.username",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.client.username'"
+  },
+  {
+    "name": "spring.boot.admin.client.password",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.client.password'"
+  },
+  {
+    "name": "management.endpoints.web.exposure.include",
+    "type": "java.lang.String",
+    "description": "A description for 'management.endpoints.web.exposure.include'"
+  },
+  {
+    "name": "management.endpoint.health.show-details",
+    "type": "java.lang.String",
+    "description": "A description for 'management.endpoint.health.show-details'"
+  },
+  {
+    "name": "management.endpoint.loggers.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'management.endpoint.loggers.enabled'"
+  },
+  {
+    "name": "info.app.name",
+    "type": "java.lang.String",
+    "description": "A description for 'info.app.name'"
+  },
+  {
+    "name": "info.app.version",
+    "type": "java.lang.String",
+    "description": "A description for 'info.app.version'"
+  },
+  {
+    "name": "info.app.description",
+    "type": "java.lang.String",
+    "description": "A description for 'info.app.description'"
+  }
+]}
