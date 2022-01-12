@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sun.istack.NotNull;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import mx.gda.resultados.services.ResultadosService;
@@ -45,8 +47,15 @@ public class ApiResultadosController {
 
 	@GetMapping("/resultado/amazon/base64")
 	@ApiOperation("Method to consult the result of Amazon Event")
-	public ResponseEntity<String> getResultadoAmazon(@RequestParam Long korden, @RequestParam Integer opcion) {
-		return ResponseEntity.ok(resultadosService.getResultadosAmazon(korden, opcion));
+	public ResponseEntity<String> getResultadoAmazon(@NotNull @RequestParam Long korden,@NotNull @RequestParam Integer opcion) {
+		//return ResponseEntity.ok(resultadosService.getResultadosAmazon(korden, opcion));
+		return ResponseEntity.ok(resultadosService.getResultadosAmazon2(korden));
+	}
+	
+	@GetMapping("/resultado/amazon/certificado/base64")
+	@ApiOperation("Method to consult the certificate of Amazon Event")
+	public ResponseEntity<String> getCertificadoAmazon(@NotNull @RequestParam Long korden) {
+		return ResponseEntity.ok(resultadosService.getCertificadoAmazon(korden));
 	}
 
 	@GetMapping("/resultado/gda/base64")
