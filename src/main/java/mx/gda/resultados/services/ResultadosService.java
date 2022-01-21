@@ -1195,7 +1195,7 @@ public class ResultadosService {
 							" 	to_char(a.kordensucursal) as kordensucursal, "+
 							" 	extract( year from age(trunc(a.dreg),a.dnacimiento)) as edad_paciente, "+
 							" 	case "+
-							" 		when a.bsexo=0 then 'FEMALE' "+
+							" 		when a.bsexo=2 then 'FEMALE' "+
 							" 		else 'MALE' "+
 							" 	end as sexo, "+
 							" 	case	 "+
