@@ -64,13 +64,13 @@ public class TransaccionesService {
 	}
 	
 	@Transactional
-	public Boolean updateOrdenEvento(String kordensucursal) {
+	public Boolean updateOrdenEvento(Long korden) {
 		Boolean salida=false;
 		Integer r = 0;
 		try {
 			Query q = entityManager.createNativeQuery(
-					"update eventos.t_orden set dcorreo=now(),benvio_correo=true where kordensucursal=?1");
-			q.setParameter(1, kordensucursal);
+					"update eventos.t_orden set dcorreo=now(),benvio_correo=true where korden=?1");
+			q.setParameter(1, korden);
 			r = q.executeUpdate();
 			logger.debug("Valor de r (updateOrdenEvento) : {} ", r);
 			if (r >= 1) {
@@ -79,6 +79,51 @@ public class TransaccionesService {
 			}
 		} catch (Exception e) {
 			logger.error("Error en método saveUserRole : {}", e.getMessage());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+		return salida;
+	}
+	
+	@Transactional
+	public Boolean updateOrdenEventoEmpresa(Long korden) {
+		Boolean salida=false;
+		Integer r = 0;
+		try {
+			Query q = entityManager.createNativeQuery(
+					"update eventos.t_orden set dempresa=now(),benvio_empresa=true where korden=?1");
+			q.setParameter(1, korden);
+			r = q.executeUpdate();
+			logger.debug("Valor de r (updateOrdenEvento) : {} ", r);
+			if (r >= 1) {
+				salida = true;
+				entityManager.flush();
+			}
+		} catch (Exception e) {
+			logger.error("Error en método saveUserRole : {}", e.getMessage());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+		return salida;
+	}
+	
+	@Transactional
+	public Boolean insertaExclusion(Long korden,Long kordensucursal,Integer tipo,String comentario) {
+		Boolean salida=false;
+		Integer r = 0;
+		try {
+			Query q = entityManager.createNativeQuery(
+					"insert into eventos.t_email_covid_exclusiones values (to_char(now (),'ddMMyyyyHH24MISSUS'),?1,?2,?3,now(),?4)");
+			q.setParameter(1, korden);
+			q.setParameter(2, kordensucursal);
+			q.setParameter(3, tipo);
+			q.setParameter(4, comentario);
+			r = q.executeUpdate();
+			logger.debug("Valor de r (updateOrdenEvento) : {} ", r);
+			if (r >= 1) {
+				salida = true;
+				entityManager.flush();
+			}
+		} catch (Exception e) {
+			logger.error("Error en método insertaExclusion : {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 		return salida;

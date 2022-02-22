@@ -32,6 +32,7 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -71,10 +72,12 @@ public class ResultadosService {
 	Integer NO_INTENTOS = Integer.valueOf(4);
 	//Long KEVENTO_AMAZON=new Long(349); //DEV
 	Long KEVENTO_AMAZON=new Long(1162); //Prod
-	Util_Base64 util_Base64= new Util_Base64();
-
+	
+	@Autowired
+	private Util_Base64 util_Base64;
 	@PersistenceContext
 	private EntityManager entityManager;
+
 
 	/* Regresa el pdf de Error */
 	public byte[] getPDF_ERROR() {
@@ -344,11 +347,12 @@ public class ResultadosService {
 			salida = tmp.getArchivoBase64().getValue();
 		return salida;
 	}
-
+	
 	/* Método para combinar los PDF's (cadenas en base64) */
 	private String combinePDFs(List<String> resultados) {
 		String salida = null;
 		PDDocument mergedPDF=null;
+		PDDocument tmpPDF=null;
 		logger.info(" Se consume método:  combinePDFs ");
 		try {
 			if (resultados != null) {
@@ -359,29 +363,25 @@ public class ResultadosService {
 					byte[] tmp_document = null;
 					for (String resultado : resultados) {
 						tmp_document = Base64.getDecoder().decode(resultado);
-						ut.appendDocument(mergedPDF, PDDocument.load(tmp_document));
+						tmpPDF=PDDocument.load(tmp_document);
+						//logger.info("Document Pages: {}", tmpPDF.getPages().getCount());
+						ut.appendDocument(mergedPDF, tmpPDF);
+						tmpPDF.close();
 					}
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					mergedPDF.save(baos);
 					salida = Base64.getEncoder().encodeToString(baos.toByteArray());
-					
+					mergedPDF.close();
 				} else {
 					salida = resultados.get(0);
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error en mcombinePDFs : {}", e.getMessage());
-		}finally {
-			if(mergedPDF!=null) {
-				try {
-					mergedPDF.close();
-				} catch (IOException e) {
-					this.logger.error(e.getMessage());
-				}
-			}
+			logger.error("Error en método combinePDFs : {}", e.getMessage());
 		}
 		return salida;
 	}
+	
 
 	/* Método para consultar los resultados de las ordenes de la marca 5-Swiss  */
 	private List<String> getResultadosMarcaSwiss(TordenSucursal tordenSucursal, Integer opcion) {

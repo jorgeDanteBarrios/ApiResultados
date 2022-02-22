@@ -9,8 +9,10 @@ import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+@Component
 public class Util_Base64 {
 	
 	Logger logger= LoggerFactory.getLogger(Util_Base64.class);

@@ -2,26 +2,26 @@ package mx.gda.resultados.objects;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 public class EnviaResCovid {
 
+	@NotNull(message = "El campo kordensucursal no puede ser nulo")
 	private String kordensucursal;
+	@NotNull(message = "El campo to no puede ser nulo")
 	private List<String> to;
+	private List<String> cc;
+	private List<String> bcc;
+	@NotNull(message = "El campo cmarca no puede ser nulo")
 	private Long cmarca;
+	@NotNull(message = "El campo files no puede ser nulo")
 	private List<EmailFile> files;
+	@NotNull(message = "El campo paciente no puede ser nulo")
 	private String paciente;
 
 	public EnviaResCovid() {
 		super();
 		// TODO Auto-generated constructor stub
-	}
-
-	public EnviaResCovid(String kordensucursal, List<String> to, Long cmarca, List<EmailFile> files, String paciente) {
-		super();
-		this.kordensucursal = kordensucursal;
-		this.to = to;
-		this.cmarca = cmarca;
-		this.files = files;
-		this.paciente = paciente;
 	}
 
 	public String getKordensucursal() {
@@ -38,6 +38,22 @@ public class EnviaResCovid {
 
 	public void setTo(List<String> to) {
 		this.to = to;
+	}
+
+	public List<String> getCc() {
+		return cc;
+	}
+
+	public void setCc(List<String> cc) {
+		this.cc = cc;
+	}
+
+	public List<String> getBcc() {
+		return bcc;
+	}
+
+	public void setBcc(List<String> bcc) {
+		this.bcc = bcc;
 	}
 
 	public Long getCmarca() {
@@ -66,8 +82,8 @@ public class EnviaResCovid {
 
 	@Override
 	public String toString() {
-		return "EnviaResCovid [kordensucursal=" + kordensucursal + ", to=" + to + ", cmarca=" + cmarca + ", files="
-				+ files + ", paciente=" + paciente + "]";
+		return "EnviaResCovid [kordensucursal=" + kordensucursal + ", to=" + to + ", cc=" + cc + ", bcc=" + bcc
+				+ ", cmarca=" + cmarca + ", files=" + files + ", paciente=" + paciente + "]";
 	}
 
 }
