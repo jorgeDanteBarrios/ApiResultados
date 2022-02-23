@@ -37,6 +37,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import mx.gda.resultados.objects.LigaFuji;
+import mx.gda.resultados.objects.MuestraFuji;
 import mx.gda.resultados.objects.Orden;
 import mx.gda.resultados.objects.ReporteAmazon;
 import mx.gda.resultados.objects.ResultadoJasperAmazon;
@@ -57,6 +59,7 @@ import wsclient.azteca.WsLabCore;
 import wsclient.fuji.ReportWebService;
 import wsclient.fuji.ReportWebServiceSoap;
 import wsclient.fuji.Response;
+import wsclient.fuji.url.WsGetLink;
 import wsclient.patcore.IwsPatCore;
 import wsclient.patcore.Service1;
 
@@ -72,6 +75,7 @@ public class ResultadosService {
 	Integer NO_INTENTOS = Integer.valueOf(4);
 	//Long KEVENTO_AMAZON=new Long(349); //DEV
 	Long KEVENTO_AMAZON=new Long(1162); //Prod
+	Integer EXPIRATION_SECONDS_URL_FUJI=10800;  // 3 Horas=10800 seconds
 	
 	@Autowired
 	private Util_Base64 util_Base64;
@@ -108,9 +112,6 @@ public class ResultadosService {
 	public byte[] getResultado_WsAzteca(String orden, Integer opcion) throws Exception {
 		byte[] salida = null;
 		Boolean logo =false;
-		logger.info(" Se consume método:  getResultado_WsAzteca ");
-		logger.debug("Orden  : {}",orden);
-		logger.debug("Opcion : {}",opcion);
 		if (opcion.intValue() >= 1) {
 			logo=true;
 		}			
@@ -119,7 +120,7 @@ public class ResultadosService {
 		if (tmp.isGenerado().booleanValue()) {			
 			salida = Base64.getDecoder().decode(tmp.getArchivoBase64().getValue());
 		} else {
-			logger.info("Mensaje Respuesta Azteca (mensaje): {}", tmp.getMensaje().getValue());
+			logger.debug("Mensaje Respuesta Azteca (mensaje): {}", tmp.getMensaje().getValue());
 			salida = Base64.getDecoder().decode(this.PDF_ERROR);
 		}
 		return salida;
@@ -129,18 +130,15 @@ public class ResultadosService {
 	public byte[] getResultado_WsSwiss(String orden, Integer opcion) throws Exception {
 		byte[] salida = null;
 		Boolean logo=false;
-		logger.info(" Se consume método:  getResultado_WsSwiss ");
-		logger.debug("Orden  : {}",orden);
-		logger.debug("Opcion : {}",opcion);
 		if (opcion.intValue() >= 1) {
 			logo=true;
 		}	
 		wsclient.swiss.RespReporte tmp = consulta_WsSwiss(orden, logo);
-		logger.info("Mensaje Respuesta Swiss (generado): {}", tmp.isGenerado().booleanValue());
+		logger.debug("Mensaje Respuesta Swiss (generado): {}", tmp.isGenerado().booleanValue());
 		if (tmp.isGenerado().booleanValue()) {			
 			salida = Base64.getDecoder().decode(tmp.getArchivoBase64().getValue());
 		} else {
-			logger.info("Mensaje Respuesta Swiss (mensaje): {}", tmp.getMensaje().getValue());
+			logger.debug("Mensaje Respuesta Swiss (mensaje): {}", tmp.getMensaje().getValue());
 			salida = Base64.getDecoder().decode(this.PDF_ERROR);
 		}
 		return salida;
@@ -149,19 +147,16 @@ public class ResultadosService {
 	/* Método para obtener el PDF de resultados de labcore Nova */
 	public byte[] getResultado_WsNova(String orden, Integer opcion) throws Exception {
 		byte[] salida = null;
-		logger.info(" Se consume método:  getResultado_WsNova ");
-		logger.debug("Orden  : {}",orden);
-		logger.debug("Opcion : {}",opcion);
 		Boolean logo=false;
 		if (opcion.intValue() >= 1) {
 			logo=true;
 		}
 		wsclient.nova.RespReporte tmp = consulta_WsNova(orden, logo);
-		logger.info("Mensaje Respuesta Nova (generado): {}", tmp.isGenerado().booleanValue());
+		logger.debug("Mensaje Respuesta Nova (generado): {}", tmp.isGenerado().booleanValue());
 		if (tmp.isGenerado().booleanValue()) {
 			salida = Base64.getDecoder().decode(tmp.getArchivoBase64().getValue());
 		} else {
-			logger.info("Mensaje Respuesta Nova (mensaje): {}", tmp.getMensaje().getValue());
+			logger.debug("Mensaje Respuesta Nova (mensaje): {}", tmp.getMensaje().getValue());
 			salida = Base64.getDecoder().decode(this.PDF_ERROR);
 		}
 		return salida;
@@ -171,9 +166,6 @@ public class ResultadosService {
 	public String getResBase64_WsAzteca(String orden, Integer opcion) throws Exception {
 		String salida= null;
 		Boolean logo=false;
-		logger.info(" Se consume método:  getResBase64_WsAzteca ");
-		logger.debug("Orden  : {}",orden);
-		logger.debug("Opcion : {}",opcion);
 		if (opcion.intValue() >= 1) {
 			logo =true;
 		}		
@@ -182,7 +174,7 @@ public class ResultadosService {
 		if (tmp.isGenerado().booleanValue()) {
 			salida = tmp.getArchivoBase64().getValue();
 		}else {
-			logger.error("Sin datos [getResBase64_WsAzteca]: Validar el número de orden y/o que los resultados esten liberados");
+			logger.error("Error en método getResBase64_WsAzteca : Validar el número de orden y/o que los resultados esten liberados");
 			throw new ResponseStatusException(HttpStatus.NO_CONTENT,"Validar el número de orden y/o que los resultados esten liberados");
 		}
 		return salida;
@@ -192,9 +184,6 @@ public class ResultadosService {
 	public String getResBase64_WsSwiss(String orden, Integer opcion) throws Exception {
 		String salida = null;
 		Boolean logo=false;
-		logger.info(" Se consume método:  getResBase64_WsAzteca ");
-		logger.debug("Orden  : {}",orden);
-		logger.debug("Opcion : {}",opcion);
 		if (opcion.intValue() >= 1) {
 			logo=true;
 		}
@@ -203,7 +192,7 @@ public class ResultadosService {
 		if (tmp.isGenerado().booleanValue()) {
 			salida = tmp.getArchivoBase64().getValue();
 		}else {
-			logger.error("Sin datos [getResBase64_WsSwiss]: Validar el número de orden y/o que los resultados esten liberados");
+			logger.error("Error en método getResBase64_WsSwiss: Validar el número de orden y/o que los resultados esten liberados");
 			throw new ResponseStatusException(HttpStatus.NO_CONTENT,"Validar el número de orden y/o que los resultados esten liberados");
 		}
 		return salida;
@@ -213,9 +202,6 @@ public class ResultadosService {
 	public String getResBase64_WsNova(String orden, Integer opcion) throws Exception {
 		String salida = null;
 		Boolean logo=false;
-		logger.info(" Se consume método:  getResBase64_WsNova ");
-		logger.debug("Orden  : {}",orden);
-		logger.debug("Opcion : {}",opcion);
 		if (opcion.intValue() >= 1) {
 			logo=true;
 		}
@@ -224,7 +210,7 @@ public class ResultadosService {
 		if (tmp.isGenerado().booleanValue()) {
 			salida = tmp.getArchivoBase64().getValue();
 		}else {
-			logger.error("Sin datos [getResBase64_WsNova]: Validar el número de orden y/o que los resultados esten liberados");
+			logger.error("Error en método getResBase64_WsNova: Validar el número de orden y/o que los resultados esten liberados");
 			throw new ResponseStatusException(HttpStatus.NO_CONTENT,"Validar el número de orden y/o que los resultados esten liberados");
 		}
 		return salida;
@@ -236,9 +222,6 @@ public class ResultadosService {
 		byte[] tmp = null;
 		byte[] salida = null;
 		Path path = null;
-		logger.info(" Se consume método:  getResBase64_WsNova ");
-		logger.debug("kevento : {}",kevento);
-		logger.debug("Opcion  : {}",opcion);
 		ordenes = getOrdenesByEvento(kevento);
 		if (ordenes != null && ordenes.size() >= 1) {
 			String tmpdir = System.getProperty("java.io.tmpdir");
@@ -246,8 +229,7 @@ public class ResultadosService {
 			File tmpFile = path.resolve(generaNombreCarpeta()).toFile();
 			if (!tmpFile.mkdir()) {
 				logger.error("[getResultadosByEvento] Error al generar la carpeta temporal");
-				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-						"Error al generar los archivos temporales");
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,	"Error al generar los archivos temporales");
 			}
 			logger.debug("[getResultadosByEvento] Se crea cartpeta en {}", tmpFile.getAbsolutePath());
 			for (Orden o : ordenes) {
@@ -257,7 +239,7 @@ public class ResultadosService {
 						createPDF(tmp, o.getNombrePx(), tmpFile.toPath());
 				} catch (Exception e) {
 					logger.error("[getResultadosByEvento] Error al consultar la orden {}", o);
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 			salida = generaZip(tmpFile.toPath(), kevento.toString());
@@ -277,9 +259,6 @@ public class ResultadosService {
 	public String getResultado(Long kordensucursal, Integer opcion) {
     String salida = null;
     List<String> tmpResultados = null;
-    logger.info(" Se consume método:  getResultado ");
-	logger.debug("kordensucursal : {}",kordensucursal);
-	logger.debug("Opcion         : {}",opcion);
     TordenSucursal tordenSucursal = consultaOrden(kordensucursal);
     if (tordenSucursal != null) {
       if (tordenSucursal.getCestadoRegistro().longValue() != 17L) {
@@ -302,8 +281,8 @@ public class ResultadosService {
         throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Orden cancelada");
       } 
     } else {
-      logger.error("Error en getResultado: kordensucursal no encontrada");
-      throw new ResponseStatusException(HttpStatus.NO_CONTENT, " La orden  no existe ");
+      logger.error("Error en getResultado: Orden no valida");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Orden no valida");
     } 
     logger.debug(">>> No. de PDF's {}", Integer.valueOf(tmpResultados.size()));
     salida = combinePDFs(tmpResultados);
@@ -327,7 +306,8 @@ public class ResultadosService {
 					if (tmpFujiResponse.getMessage().equals("No fue posible encontrar el estudio."))
 						break;
 				} catch (Exception e) {
-					this.logger.error(e.getMessage());
+					 logger.error("Error en getResBase64_WsFuji_PDF: {}",e.getMessage());
+					 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error en getResBase64_WsFuji_PDF");
 				}
 				i++;
 			}
@@ -341,7 +321,6 @@ public class ResultadosService {
 		Boolean logo = Boolean.valueOf(false);
 		if (opcion.intValue() >= 1)
 			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsSwiss [{},{}]", orden, opcion);
 		wsclient.patcore.RespReporte tmp = consulta_WsPatcore(orden, logo);
 		if (tmp.isGenerado().booleanValue())
 			salida = tmp.getArchivoBase64().getValue();
@@ -353,7 +332,6 @@ public class ResultadosService {
 		String salida = null;
 		PDDocument mergedPDF=null;
 		PDDocument tmpPDF=null;
-		logger.info(" Se consume método:  combinePDFs ");
 		try {
 			if (resultados != null) {
 				if (resultados.size() > 1) {
@@ -378,6 +356,7 @@ public class ResultadosService {
 			}
 		} catch (Exception e) {
 			logger.error("Error en método combinePDFs : {}", e.getMessage());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error en combinePDFs");
 		}
 		return salida;
 	}
@@ -387,14 +366,14 @@ public class ResultadosService {
 	private List<String> getResultadosMarcaSwiss(TordenSucursal tordenSucursal, Integer opcion) {
 		List<String> salida = new ArrayList<>();
 		List<String> resultados_fuji = new ArrayList<>();
+		List<MuestraFuji> muestrasFuji=null;
 		Boolean logo = Boolean.valueOf(false);
 		Integer fuji = null;
 		int i = 1;
 		if (opcion.intValue() >= 1)
 			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultado_WsSwiss [{},{}]", tordenSucursal.getClaveLabcore(), opcion);
 		while (i < this.NO_INTENTOS.intValue()) {
-			this.logger.debug("Consulta de WsSwiss, intento: {}", Integer.valueOf(i));
+			logger.debug("Consulta de WsSwiss, intento: {}", Integer.valueOf(i));
 			try {
 				wsclient.swiss.RespReporte tmpSwiss = consulta_WsSwiss(tordenSucursal.getClaveLabcore(), logo);
 				if (tmpSwiss.isGenerado().booleanValue()) {
@@ -405,7 +384,7 @@ public class ResultadosService {
 						|| ((String) tmpSwiss.getMensaje().getValue()).equals("Orden sin resultados validados."))
 					break;
 			} catch (Exception e) {
-				this.logger.error(e.getMessage());
+				logger.error(e.getMessage());
 			}
 			i++;
 		}
@@ -422,13 +401,13 @@ public class ResultadosService {
 						|| ((String) tmpNova.getMensaje().getValue()).equals("Orden sin resultados validados."))
 					break;
 			} catch (Exception e) {
-				this.logger.error(e.getMessage());
+				logger.error(e.getMessage());
 			}
 			i++;
 		}
 		i = 1;
 		while (i < this.NO_INTENTOS.intValue()) {
-			this.logger.debug("Consulta de WsAzteca, intento: {}", Integer.valueOf(i));
+			logger.debug("Consulta de WsAzteca, intento: {}", Integer.valueOf(i));
 			try {
 				RespReporte tmpAzteca = consulta_WsAzteca(tordenSucursal.getClaveLabcore(), logo);
 				if (tmpAzteca.isGenerado().booleanValue()) {
@@ -439,14 +418,19 @@ public class ResultadosService {
 						|| ((String) tmpAzteca.getMensaje().getValue()).equals("Orden sin resultados validados."))
 					break;
 			} catch (Exception e) {
-				this.logger.error(e.getMessage());
+				logger.error(e.getMessage());
 			}
 			i++;
 		}
 		fuji = contieneEstudiosDeFuji(tordenSucursal.getKordensucursal());
 		if (fuji.intValue() > 0) {
 			tordenSucursal.setbFuji(Boolean.valueOf(true));
-			tordenSucursal.setKmuestras_fuji(getMuestrasFuji(tordenSucursal.getKordensucursal()));
+			muestrasFuji=getObjectMuestrasFuji(tordenSucursal.getKordensucursal());
+			List<Long> tmpKMuestras=new ArrayList<Long>();
+			for(MuestraFuji m:muestrasFuji) {
+				tmpKMuestras.add(m.getKmuestrasucursal());
+			}
+			tordenSucursal.setKmuestras_fuji(tmpKMuestras);
 			resultados_fuji = getResBase64_WsFuji_PDF(tordenSucursal.getCmarca(), tordenSucursal.getCsucursal(),
 					tordenSucursal.getKmuestras_fuji());
 			if (resultados_fuji.size() > 0)
@@ -459,6 +443,7 @@ public class ResultadosService {
 	private List<String> getResultadosMarcasCDMX(TordenSucursal tordenSucursal, Integer opcion) {
 		List<String> salida = new ArrayList<>();
 		List<String> resultados_fuji = new ArrayList<>();
+		List<MuestraFuji> muestrasFuji=null;
 		String tmpCombinePDF = null;
 		wsclient.azteca.RespReporte tmpAzteca;
 		wsclient.patcore.RespReporte tmpPatcore;
@@ -468,9 +453,8 @@ public class ResultadosService {
 		int i = 1;
 		if (opcion.intValue() >= 1)
 			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultadosMarcasCDMX [{},{}]", tordenSucursal.getClaveLabcore(), opcion);
 		while (i < this.NO_INTENTOS.intValue()) {
-			this.logger.debug("Consulta de WsAzteca, intento: {}", Integer.valueOf(i));
+			logger.debug("Consulta de WsAzteca, intento: {}", Integer.valueOf(i));
 			try {
 				tmpAzteca = consulta_WsAzteca(tordenSucursal.getClaveLabcore(), logo);
 				if (tmpAzteca.isGenerado().booleanValue()) {
@@ -481,7 +465,7 @@ public class ResultadosService {
 						|| ((String) tmpAzteca.getMensaje().getValue()).equals("Orden sin resultados validados."))
 					break;
 			} catch (Exception e) {
-				this.logger.error(e.getMessage());
+				logger.error(e.getMessage());
 			}
 			i++;
 		}
@@ -491,7 +475,7 @@ public class ResultadosService {
 		if (tordenSucursal.getbPatcore().booleanValue()) {
 			i = 1;
 			while (i < this.NO_INTENTOS.intValue()) {
-				this.logger.debug("Consulta de WsPatcore, intento: {}", Integer.valueOf(i));
+				logger.debug("Consulta de WsPatcore, intento: {}", Integer.valueOf(i));
 				try {
 					tmpPatcore = consulta_WsPatcore(tordenSucursal.getClaveLabcore(), logo);
 					if (tmpPatcore.isGenerado().booleanValue()) {
@@ -501,7 +485,7 @@ public class ResultadosService {
 					if (((String) tmpPatcore.getMensaje().getValue()).equals("La orden no existe."))
 						break;
 				} catch (Exception e) {
-					this.logger.error(e.getMessage());
+					logger.error(e.getMessage());
 				}
 			}
 			i++;
@@ -509,14 +493,19 @@ public class ResultadosService {
 		fuji = contieneEstudiosDeFuji(tordenSucursal.getKordensucursal());
 		if (fuji.intValue() > 0) {
 			tordenSucursal.setbFuji(Boolean.valueOf(true));
-			tordenSucursal.setKmuestras_fuji(getMuestrasFuji(tordenSucursal.getKordensucursal()));
+			muestrasFuji=getObjectMuestrasFuji(tordenSucursal.getKordensucursal());
+			List<Long> tmpKMuestras=new ArrayList<Long>();
+			for(MuestraFuji m:muestrasFuji) {
+				tmpKMuestras.add(m.getKmuestrasucursal());
+			}
+			tordenSucursal.setKmuestras_fuji(tmpKMuestras);
 			if (tordenSucursal.getKmuestras_fuji().size() > 0)
 				resultados_fuji = getResBase64_WsFuji_PDF(tordenSucursal.getCmarca(), tordenSucursal.getCsucursal(),
 						tordenSucursal.getKmuestras_fuji());
 			if (resultados_fuji.size() > 0)
 				salida.addAll(resultados_fuji);
 		}
-		this.logger.debug(">>> No. de PDF's {}", Integer.valueOf(salida.size()));
+		logger.debug(">>> No. de PDF's {}", Integer.valueOf(salida.size()));
 		tmpCombinePDF = combinePDFs(salida);
 		salida.clear();
 		salida.add(tmpCombinePDF);
@@ -526,15 +515,15 @@ public class ResultadosService {
 	private List<String> getResultadoMarcaLiacsa(TordenSucursal tordenSucursal, Integer opcion) {
 		List<String> salida = new ArrayList<>();
 		List<String> resultados_fuji = new ArrayList<>();
+		List<MuestraFuji> muestrasFuji=null;
 		String tmpCombinePDF = null;
 		Boolean logo = Boolean.valueOf(false);
 		Integer fuji = null;
 		int i = 1;
 		if (opcion.intValue() >= 1)
 			logo = Boolean.valueOf(true);
-		this.logger.debug("Entra al mgetResultadoMarcaLiacsa [{},{}]", tordenSucursal.getClaveLabcore(), opcion);
 		while (i < this.NO_INTENTOS.intValue()) {
-			this.logger.debug("Consulta de WsAzteca, intento: {}", Integer.valueOf(i));
+			logger.debug("Consulta de WsAzteca, intento: {}", Integer.valueOf(i));
 			try {
 				RespReporte tmpAzteca = consulta_WsAzteca(tordenSucursal.getClaveLabcore(), logo);
 				if (tmpAzteca.isGenerado().booleanValue()) {
@@ -545,21 +534,26 @@ public class ResultadosService {
 						|| ((String) tmpAzteca.getMensaje().getValue()).equals("Orden sin resultados validados."))
 					break;
 			} catch (Exception e) {
-				this.logger.error(e.getMessage());
+				logger.error(e.getMessage());
 			}
 			i++;
 		}
 		fuji = contieneEstudiosDeFuji(tordenSucursal.getKordensucursal());
 		if (fuji.intValue() > 0) {
 			tordenSucursal.setbFuji(Boolean.valueOf(true));
-			tordenSucursal.setKmuestras_fuji(getMuestrasFuji(tordenSucursal.getKordensucursal()));
+			muestrasFuji=getObjectMuestrasFuji(tordenSucursal.getKordensucursal());
+			List<Long> tmpKMuestras=new ArrayList<Long>();
+			for(MuestraFuji m:muestrasFuji) {
+				tmpKMuestras.add(m.getKmuestrasucursal());
+			}
+			tordenSucursal.setKmuestras_fuji(tmpKMuestras);
 			if (tordenSucursal.getKmuestras_fuji().size() > 0)
 				resultados_fuji = getResBase64_WsFuji_PDF(tordenSucursal.getCmarca(), tordenSucursal.getCsucursal(),
 						tordenSucursal.getKmuestras_fuji());
 			if (resultados_fuji.size() > 0)
 				salida.addAll(resultados_fuji);
 		}
-		this.logger.debug(">>> No. de PDF's {}", Integer.valueOf(salida.size()));
+		logger.debug(">>> No. de PDF's {}", Integer.valueOf(salida.size()));
 		tmpCombinePDF = combinePDFs(salida);
 		salida.clear();
 		salida.add(tmpCombinePDF);
@@ -578,11 +572,10 @@ public class ResultadosService {
 			});
 			salida = futureTask1.get(this.TIME_OUT_SECONDS.intValue(), TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
-			this.logger.error("Timeout al consultar ws Azteca ({} seconds)", this.TIME_OUT_SECONDS);
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					"Timeout al consultar ws Azteca (" + this.TIME_OUT_SECONDS + " seconds)");
+			logger.error("Timeout al consultar ws Azteca ({} seconds)", this.TIME_OUT_SECONDS);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Timeout al consultar ws Azteca (" + this.TIME_OUT_SECONDS + " seconds)");
 		} catch (Exception e) {
-			this.logger.error("Error al consultar ws Azteca: {}", e.getMessage());
+			logger.error("Error al consultar ws Azteca: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar ws Azteca");
 		} finally {
 			executor.shutdown();
@@ -626,11 +619,10 @@ public class ResultadosService {
 			});
 			salida = futureTask1.get(this.TIME_OUT_SECONDS.intValue(), TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
-			this.logger.error("Timeout al consultar ws Nova ({} seconds)");
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					"Timeout al consultar ws Nova (" + this.TIME_OUT_SECONDS + " seconds)");
+			logger.error("Timeout al consultar ws Nova ({} seconds)");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Timeout al consultar ws Nova (" + this.TIME_OUT_SECONDS + " seconds)");
 		} catch (Exception e) {
-			this.logger.error("Error al consultar ws Nova: {}", e.getMessage());
+			logger.error("Error al consultar ws Nova: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar ws Nova");
 		} finally {
 			executor.shutdown();
@@ -650,11 +642,10 @@ public class ResultadosService {
 			});
 			salida = futureTask1.get(this.TIME_OUT_SECONDS.intValue(), TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
-			this.logger.error("Timeout al consultar ws Nova ({} seconds)");
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					"Timeout al consultar ws Nova (" + this.TIME_OUT_SECONDS + " seconds)");
+			logger.error("Timeout al consultar ws Nova ({} seconds)");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Timeout al consultar ws Nova (" + this.TIME_OUT_SECONDS + " seconds)");
 		} catch (Exception e) {
-			this.logger.error("Error al consultar ws Nova: {}", e.getMessage());
+			logger.error("Error al consultar ws Nova: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar ws Nova");
 		} finally {
 			executor.shutdown();
@@ -665,48 +656,44 @@ public class ResultadosService {
 	/* Método para consultar el servivio de Fuji , método para obtener el PDF*/
 	private Response consulta_WsFuji_PDF(Integer cmarca, Long csucursal, Long kmuestrasucursal) {
 		Response salida = null;
-		String letra_sucursal = null;
-		switch (cmarca.intValue()) {
-		case 1:
-			letra_sucursal = "O";
-			break;
-		case 2:
-			letra_sucursal = "O";
-			break;
-		case 3:
-			letra_sucursal = "O";
-			break;
-		case 4:
-			letra_sucursal = "A";
-			break;
-		case 5:
-			letra_sucursal = "S";
-			break;
-		case 15:
-			letra_sucursal = "L";
-			break;
-		default:
-			this.logger.error(" Error en consulta_WsFuji_PDF: {}- Marca no definida para generar clave", cmarca);
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					" Error en consulta_WsFuji_PDF: " + cmarca + "- Marca no definida para generar clave");
-		}
-		String accessNumber = String.valueOf(letra_sucursal) + csucursal + "-" + kmuestrasucursal;
-		this.logger.debug("Orden a consultar en Fuji: {}", accessNumber);
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		try {
 			Future<Response> futureTask1 = executor.submit(() -> {
 				ReportWebService r = new ReportWebService();
 				ReportWebServiceSoap iFuji = r.getReportWebServiceSoap();
-				return iFuji.reporteBase64(accessNumber);
+				//return iFuji.reporteBase64(accessNumber);
+				return iFuji.reporteLogoBase64(generaNumAccesoFuji(cmarca, csucursal, kmuestrasucursal));
 			});
 			salida = futureTask1.get(this.TIME_OUT_SECONDS.intValue(), TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
-			this.logger.error("Timeout al consultar ws Fuji ({} seconds)");
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					"Timeout al consultar ws Fuji (" + this.TIME_OUT_SECONDS + " seconds)");
+			logger.error("Timeout al consultar consulta_WsFuji_PDF ({} seconds)");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Timeout al consultar ws Fuji (" + this.TIME_OUT_SECONDS + " seconds)");
 		} catch (Exception e) {
-			this.logger.error("Error al consultar ws Fuji (PDF): {}", e.getMessage());
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar ws Fuji (PDF)");
+			logger.error("Error al consultar consulta_WsFuji_PDF: {}", e.getMessage());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar consulta_WsFuji_PDF");
+		} finally {
+			executor.shutdown();
+		}
+		return salida;
+	}
+	
+	/* Método para consultar el Ws de fuji y obtener la liga para visualizar imagenes  */
+	private String consulta_WSFujiURL(String numeroDeAcceso) {
+		String salida=null;
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		try {
+			Future<String> futureTask1 = executor.submit(() -> {
+				WsGetLink service= new WsGetLink();
+				wsclient.fuji.url.WsGetLinkSoap port= service.getWsGetLinkSoap();
+				return port.obtenerLink(numeroDeAcceso, EXPIRATION_SECONDS_URL_FUJI);
+			});
+			salida= futureTask1.get(this.TIME_OUT_SECONDS.intValue(), TimeUnit.SECONDS);
+		} catch (TimeoutException e) {
+			logger.error("Timeout al consultar consulta_WSFujiURL ({} seconds)",TimeUnit.SECONDS);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Timeout al consultar consulta_WSFujiURL (" + this.TIME_OUT_SECONDS + " seconds)");
+		} catch (Exception e) {
+			logger.error("Error al consultar consulta_WSFujiURL: {}", e.getMessage());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al consultar consulta_WSFujiURL");
 		} finally {
 			executor.shutdown();
 		}
@@ -738,7 +725,7 @@ public class ResultadosService {
 			for (Object[] r : results)
 				salida.add(new Orden((String) r[0], (String) r[1]));
 		} catch (Exception e) {
-			this.logger.error("Error en mgetOrdenesByEvento: {}", e.getMessage());
+			logger.error("Error en mgetOrdenesByEvento: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -754,7 +741,7 @@ public class ResultadosService {
 			fop.write(contenido);
 			fop.flush();
 			fop.close();
-			this.logger.debug("Ubicacipdf {}", tempFile.getAbsolutePath());
+			logger.debug("Ubicacipdf {}", tempFile.getAbsolutePath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -811,7 +798,7 @@ public class ResultadosService {
 						Long.valueOf(((BigDecimal) r[4]).longValue()));
 			}
 		} catch (Exception e) {
-			this.logger.error("Error en mconsultaOrden: {}", e.getMessage());
+			logger.error("Error en consultaOrden: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -819,34 +806,38 @@ public class ResultadosService {
 		return salida;
 	}
 
+	/* Método para validar si una orden tiene estudios de Imagen */
 	private Integer contieneEstudiosDeFuji(Long kordensucursal) {
 		Integer salida = null;
 		try {
 			Query q = this.entityManager.createNativeQuery(
 					" select "+
-							" 	count(a.*) "+
+							"   count(a.*) "+
 							" from "+
-							" 	web2lablis.c_examen a, "+
-							" 	web2lablis.c_departamento b "+
+							"   web2lablis.c_examen a, "+
+							"   web2lablis.c_departamento b "+
 							" where "+
-							" 	a.cexamen in ( "+
-							" 	select "+
-							" 		distinct (c.cexamenproceso) "+
-							" 	from "+
-							" 		public.t_orden_sucursal a, "+
-							" 		public.t_orden_examen_sucursal b, "+
-							" 		web2lablis.c_examen c "+
-							" 	where "+
-							" 		a.kordensucursal =?1 "+
-							" 		and b.kordensucursal = a.kordensucursal "+
-							" 		and c.cexamen = b.cexamen "+
-							" 		and c.ulaboratoriogabinete =2 ) "+
-							" 	and b.cdepartamento = a.cdepartamento "+
-							" 	and b.cdepartamento!=133 ");
+							"   a.cexamen in ( "+
+							"   select "+
+							"     distinct (c.cexamenproceso) "+
+							"   from "+
+							"     public.t_orden_sucursal a, "+
+							"     public.t_orden_examen_sucursal b, "+
+							"     web2lablis.c_examen c "+
+							"   where "+
+							"     a.kordensucursal=?1 "+
+							"     and b.kordensucursal=a.kordensucursal "+
+							"     and c.cexamen = b.cexamen "+
+							"     and c.ulaboratoriogabinete = 2  "+
+							"     and c.cdepartamento<>73 "+  //marketing
+							"     ) "+
+							"   and b.cdepartamento = a.cdepartamento "+
+							"   and b.cdepartamento not in (133,73,129) " //serv gabinete,marketing,productos
+							);  
 			q.setParameter(1, kordensucursal);
 			salida = Integer.valueOf(((Number) q.getSingleResult()).intValue());
 		} catch (Exception e) {
-			this.logger.error("Error en mconsultaOrden: {}", e.getMessage());
+			logger.error("Error en contieneEstudiosDeFuji: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -854,6 +845,7 @@ public class ResultadosService {
 		return salida;
 	}
 
+	/* Método para validar si una orden tiene estudios de Patcore */
 	private Integer contieneEstudiosDePatcore(Long kordensucursal) {
 		Integer salida = null;
 		try {
@@ -880,7 +872,7 @@ public class ResultadosService {
 			q.setParameter(1, kordensucursal);
 			salida = Integer.valueOf(((Number) q.getSingleResult()).intValue());
 		} catch (Exception e) {
-			this.logger.error("Error en mconsultaOrden: {}", e.getMessage());
+			logger.error("Error en mconsultaOrden: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -889,8 +881,9 @@ public class ResultadosService {
 	}
 
 	/* Método obtener las muestras de imagen para consultar el WS_Fuji */
-	private List<Long> getMuestrasFuji(Long kordensucursal) {
-		List<Long> salida = new ArrayList<>();
+	private List<MuestraFuji> getObjectMuestrasFuji(Long kordensucursal) {
+		List<MuestraFuji> salida = new ArrayList<>();
+		MuestraFuji tmp=null;
 		try {
 			Query q = this.entityManager.createNativeQuery(
 					" select "+
@@ -907,6 +900,7 @@ public class ResultadosService {
 							" 	a.kordensucursal =?1 "+
 							" 	and b.kordensucursal = a.kordensucursal "+
 							" 	and c.cexamen = b.cexamen "+
+							" 	and c.cdepartamento <> 73 "+  //marketing
 							" 	and d.kordenexamensucursal = b.kordenexamensucursal "+
 							" 	and exists ( "+
 							" 	select "+
@@ -918,77 +912,36 @@ public class ResultadosService {
 							" 		e.cexamen = c.cexamenproceso "+
 							" 		and e.ulaboratoriogabinete=2 "+
 							" 		and f.cdepartamento = e.cdepartamento "+
-							" 		and f.cdepartamento != 133 ) ");
+							" 		and f.cdepartamento not in (133,73,129) ) " //--serv gabinete,marketing,productos
+							);
 			q.setParameter(1, kordensucursal);
 			@SuppressWarnings("unchecked")
 			List<Object[]> results = q.getResultList();
 			for (Object[] r : results) {
-				Long tmp = Long.valueOf(((BigDecimal) r[3]).longValue());
-				if (tmp.longValue() > 0L)
-					salida.add(tmp);
+				tmp=new MuestraFuji(
+						((BigDecimal) r[0]).longValue(),
+						(String) r[1],
+						((BigDecimal) r[2]).longValue(),
+						((BigDecimal) r[3]).longValue()
+						);
+				salida.add(tmp);
 			}
 		} catch (Exception e) {
-			this.logger.error("Error en mconsultaOrden: {}", e.getMessage());
+			logger.error("Error en getObjectMuestrasFuji: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
 		}
 		return salida;
-	}
+	}	
 	
-	/* Método para obtener los resultados (Labcore & Reporte Amz) del evento Amzon por korden */
-	public String getResultadosAmazon(Long korden,Integer opcion) {
-		String salida=null;		
-		String ordenLabcore;
-		Integer estatusAmz=null;
-		//List<String> resultados= new ArrayList<String>();
-		//ReporteAmazon tmpReporte=null;
-		logger.info("---- Se consume método getResultadosAmazon ----");
-		logger.debug("korden       : {}",korden);
-		logger.debug("opcion       : {}",opcion);
-		estatusAmz=getEstatusAmz(korden);
-		if(estatusAmz==null) {
-			this.logger.error("Error en getResultadosAmazon: {}", "Orden inexistente o sin resultados");
-			throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Favor de validar el korden,Orden inexistente o sin resultados");
-		}else if(estatusAmz.equals(6)) {
-			/*
-			tmpReporte=getDatosReporteAmazon(korden);
-			salida=getReporteAmazon(tmpReporte);
-			*/
-			this.logger.error("Error en getResultadosAmazon: {}", "Orden inexistente o sin resultados");
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Favor de validar el korden,Orden inexistente o sin resultados");
-		}else if(estatusAmz.equals(7)) {
-			ordenLabcore=getOrdenLabcoreAmazon(korden);		
-			if(ordenLabcore==null) {
-				this.logger.error("Error en getResultadosAmazon: {}", "Orden inexistente o sin resultados");
-				throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Favor de validar el korden,Orden inexistente o sin resultados");
-			}
-			/*
-			tmpReporte=getDatosReporteAmazon(korden);
-			resultados.add(getReporteAmazon(tmpReporte));
-			logger.info(ordenLabcore.substring(0, ordenLabcore.indexOf(":")-1));
-			ordenLabcore=ordenLabcore.substring(0, ordenLabcore.indexOf(":"));
-			resultados.add(getResultado(new Long(ordenLabcore), opcion));
-			salida=combinePDFs(resultados);
-			*/
-			ordenLabcore=ordenLabcore.substring(0, ordenLabcore.indexOf(":"));
-			salida=getResultado(new Long(ordenLabcore), opcion);
-		}else {
-			this.logger.error("Error en getResultadosAmazon: {}", "Orden pendiente de registro de resultados");
-			throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Favor de validar,Orden pendiente de registro de resultados");
-		}		
-		return salida;		
-	}
-	
-	public String getResultadosAmazon2(Long korden) {
+	public String getResultadosAmazon(Long korden) {
 		String salida=null;	
 		ResultadoJasperAmazon tmp=null;
 		List<String> resultados= new ArrayList<String>();
-		logger.info("---- Se consume método getResultadosAmazon2 ----");
-		logger.debug("korden       : {}",korden);
 		tmp=getDatosJasperAmazon(korden);
 		if(tmp==null) {
-			this.logger.error("Error en getResultadosAmazon2: {}", "Orden inexistente o sin resultados");
+			logger.error("Error en getResultadosAmazon: {}", "Orden inexistente o sin resultados");
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Favor de validar el korden,Orden inexistente o sin resultados");
 		}
 		if(tmp.getFecha_orina()!=null) {
@@ -1006,17 +959,15 @@ public class ResultadosService {
 		String salida=null;
 		Integer estatusAmz=null;
 		ReporteAmazon tmpReporte=null;
-		logger.info("---- Se consume método getCertificadoAmazon ----");
-		logger.debug("korden       : {}",korden);
 		estatusAmz=getEstatusAmz(korden);
 		if(estatusAmz==null) {
-			this.logger.error("Error en getResultadosAmazon: {}", "Orden inexistente o sin resultados");
+			this.logger.error("Error en getCertificadoAmazon: {}", "Orden inexistente o sin resultados");
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Favor de validar el korden, Orden inexistente");
 		}else if(estatusAmz.equals(6) || estatusAmz.equals(7)) {
 			tmpReporte=getDatosReporteAmazon(korden);
 			salida=getReporteAmazon(tmpReporte);
 		}else{
-			this.logger.error("Error en getResultadosAmazon: {}", "Orden pendiente de registro de resultados");
+			this.logger.error("Error en getCertificadoAmazon: {}", "Orden pendiente de registro de resultados");
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Favor de validar, Orden pendiente de registro de resultados");
 		}
 		return salida;
@@ -1051,7 +1002,7 @@ public class ResultadosService {
 			}
 			results.clear();
 		} catch (Exception e) {
-			this.logger.error("Error en getOrdenLabcoreAmazon: {}", e.getMessage());
+			logger.error("Error en getOrdenLabcoreAmazon: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -1104,7 +1055,7 @@ public class ResultadosService {
 			}
 			results.clear();
 		} catch (Exception e) {
-			this.logger.error("Error en getOrdenLabcoreAmazon: {}", e.getMessage());
+			logger.error("Error en getDatosReporteAmazon: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -1172,7 +1123,7 @@ public class ResultadosService {
 			}
 			results.clear();
 		} catch (Exception e) {
-			this.logger.error("Error en getEstatusAmz: {}", e.getMessage());
+			logger.error("Error en getEstatusAmz: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -1277,7 +1228,7 @@ public class ResultadosService {
 			}
 			results.clear();
 		} catch (Exception e) {
-			this.logger.error("Error en getOrdenLabcoreAmazon: {}", e.getMessage());
+			logger.error("Error en getDatosJasperAmazon: {}", e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		} finally {
 			this.entityManager.close();
@@ -1324,7 +1275,7 @@ public class ResultadosService {
 			JasperExportManager.exportReportToPdfFile(jp,tempFile.getAbsolutePath());			
 			salida=util_Base64.encodeFileToBase64(tempFile.getAbsolutePath());			
 		} catch (Exception e) {
-			logger.error("Error en método getReporteAmazon: {} ",e.getMessage());
+			logger.error("Error en método getReporteSalivaAmazon: {} ",e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}finally {
 			if(tempFile!=null) {
@@ -1373,13 +1324,89 @@ public class ResultadosService {
 			JasperExportManager.exportReportToPdfFile(jp,tempFile.getAbsolutePath());	
 			salida=util_Base64.encodeFileToBase64(tempFile.getAbsolutePath());			
 		} catch (Exception e) {
-			logger.error("Error en método getReporteAmazon: {} ",e.getMessage());
+			logger.error("Error en método getReporteOrinaAmazon: {} ",e.getMessage());
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}finally {
 			if(tempFile!=null) {
 				tempFile.delete();
 			}
 		}
+		return salida;
+	}
+	
+	/* Método para generar las URL's de los estudios de imagen (consulta de imagenes)*/
+	public List<LigaFuji> getLigaFuji(Long kordensucursal){
+		List<LigaFuji> salida= new ArrayList<LigaFuji>();
+		List<MuestraFuji> muestras= new ArrayList<MuestraFuji>();
+		LigaFuji tmpLigaFuji=null;
+		String tmpURL=null;
+		TordenSucursal tordenSucursal =null;
+		Integer numEstudiosImagen=0;
+		tordenSucursal=consultaOrden(kordensucursal);		
+		if (tordenSucursal != null) {
+			if (tordenSucursal.getCestadoRegistro().longValue()!=17L) {
+				numEstudiosImagen=contieneEstudiosDeFuji(kordensucursal);
+				if(numEstudiosImagen>=1) {
+					muestras=getObjectMuestrasFuji(kordensucursal);
+					for (MuestraFuji m : muestras) {
+						tmpURL=consulta_WSFujiURL(generaNumAccesoFuji(tordenSucursal.getCmarca(), tordenSucursal.getCsucursal(), m.getKmuestrasucursal()));
+						tmpLigaFuji=new LigaFuji(m.getEstudio(), tmpURL);
+						salida.add(tmpLigaFuji);
+					}
+				}else {
+					logger.error("Error en getLigaFuji: Orden sin estudios de imagen");
+			        throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Orden sin estudios de imagen");
+				}
+			}else{
+				logger.error("Error en getLigaFuji: Orden cancelada");
+		        throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Orden cancelada");
+			}
+		}else {
+			logger.error("Error en getLigaFuji: Orden no valida");
+		    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, " Orden no valida ");
+		}
+		return salida;
+	}
+	
+	/* Método para generar el campo (numAcceso) para consultar las ordenes en los WS de Fuji */
+	private String generaNumAccesoFuji(Integer cmarca, Long csucursal, Long kmuestrasucursal) {
+		String salida = null;
+		String letra_sucursal = null;
+		switch (cmarca.intValue()) {
+			case 1:
+				letra_sucursal = "O";
+				break;
+			case 2:
+				letra_sucursal = "O";
+				break;
+			case 3:
+				letra_sucursal = "O"; //Olab
+				break;
+			case 4:
+				letra_sucursal = "A"; //Azteca
+				break;
+			case 5:
+				letra_sucursal = "S"; //Swiss
+				break;
+			case 7:
+				letra_sucursal = "J";  //Jenner
+				break;
+			case 15:
+				letra_sucursal = "L";  //Liacsa
+				break;
+			/*
+			case :
+				letra_sucursal = "B"; //biomedica
+				break;
+			case :
+				letra_sucursal = "E"; //Exacta
+				break;
+			*/
+			default:
+				this.logger.error(" Error en generaNumAccesoFuji: Marca no definida para generar clave");
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,	" Error en generaNumAccesoFuji: Marca no definida para generar clave");
+		}
+		salida=letra_sucursal + csucursal + "-" + kmuestrasucursal;
 		return salida;
 	}
 }
