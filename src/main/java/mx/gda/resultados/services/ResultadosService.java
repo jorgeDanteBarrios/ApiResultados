@@ -295,6 +295,7 @@ public class ResultadosService {
 		int i = 1;
 		for (Long kmuestrasucursal : kmuestrassucursal) {
 			this.logger.debug("Consulta de Fuji-PDF: kmuestrasucursal {}", kmuestrassucursal);
+			 i = 1;
 			while (i < this.NO_INTENTOS.intValue()) {
 				this.logger.debug("Consulta de WsFuji-PDF, intento: {}", Integer.valueOf(i));
 				try {
@@ -303,7 +304,7 @@ public class ResultadosService {
 						salida.add(Base64.getEncoder().encodeToString(tmpFujiResponse.getReporte()));
 						break;
 					}
-					if (tmpFujiResponse.getMessage().equals("No fue posible encontrar el estudio."))
+					if (tmpFujiResponse.getMessage().equals("No se encontro documento disponible para mostrar"))
 						break;
 				} catch (Exception e) {
 					 logger.error("Error en getResBase64_WsFuji_PDF: {}",e.getMessage());
@@ -311,6 +312,7 @@ public class ResultadosService {
 				}
 				i++;
 			}
+			
 		}
 		return salida;
 	}
@@ -832,7 +834,8 @@ public class ResultadosService {
 							"     and c.cdepartamento<>73 "+  //marketing
 							"     ) "+
 							"   and b.cdepartamento = a.cdepartamento "+
-							"   and b.cdepartamento not in (133,73,129) " //serv gabinete,marketing,productos
+							//"   and b.cdepartamento not in (133,73,129) " //serv gabinete,marketing,productos
+							"   and b.cdepartamento not in (100,114,115,116,123,130,117,118,119,137,120,109,132,131,133,127,136,129,73) "
 							);  
 			q.setParameter(1, kordensucursal);
 			salida = Integer.valueOf(((Number) q.getSingleResult()).intValue());
@@ -912,7 +915,8 @@ public class ResultadosService {
 							" 		e.cexamen = c.cexamenproceso "+
 							" 		and e.ulaboratoriogabinete=2 "+
 							" 		and f.cdepartamento = e.cdepartamento "+
-							" 		and f.cdepartamento not in (133,73,129) ) " //--serv gabinete,marketing,productos
+							//" 		and f.cdepartamento not in (133,73,129) ) " //--serv gabinete,marketing,productos
+							" 		and f.cdepartamento not in (100,114,115,116,123,130,117,118,119,137,120,109,132,131,133,127,136,129,73) ) " 
 							);
 			q.setParameter(1, kordensucursal);
 			@SuppressWarnings("unchecked")
