@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>mx.gda.resultados</groupId>
 	<artifactId>ApiResultados</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>ApiResultados</name>
 
 	<properties>
@@ -73,7 +73,8 @@
         	<groupId>com.sun.xml.ws</groupId>
         	<artifactId>jaxws-rt</artifactId>
         	<version>2.3.3</version>
-    	</dependency>	
+    	</dependency>
+    	<!-- PDFBox -->	
     	<dependency>
 		    <groupId>org.apache.pdfbox</groupId>
 		    <artifactId>pdfbox</artifactId>
@@ -110,7 +111,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>  
+		<!-- Validation -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
 	</dependencies>
+
+	
 
 	<build>
 		<plugins>

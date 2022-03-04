@@ -48,5 +48,10 @@
     "name": "info.app.description",
     "type": "java.lang.String",
     "description": "A description for 'info.app.description'"
+  },
+  {
+    "name": "api.correo.covid.url",
+    "type": "java.lang.String",
+    "description": "A description for 'api.correo.covid.url'"
   }
 ]}
