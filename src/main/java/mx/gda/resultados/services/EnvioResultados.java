@@ -37,15 +37,22 @@ public class EnvioResultados {
 	private EmailClient emailClient;
 	
 	// cada 5 minutos (0/#min)
-	@Scheduled(cron = "0 0/5 * * * *")	
+	@Scheduled(cron = "0 0/5 * * * *")
+	//@Scheduled(cron = "0 */5 * * * *")
+	//@EventListener(ApplicationReadyEvent.class)
 	public Boolean enviaResultadosCovid() {
 		Boolean salida = false;
 		List<EmailResultadoCovid> ordenes = null;
 		String resultado=null;
 		logger.info("---- enviaResultadosCovid [Inicio] ----");
 		ordenes = get_PruebasRapidasCovid();
+		Integer total_ordenes=0;
+		Integer contador=1;
 		if (ordenes != null) {
+			total_ordenes=ordenes.size();
 			for (EmailResultadoCovid o : ordenes) {
+				logger.info("Orden {} de {}", contador,total_ordenes);
+				contador++;
 				try {
 					resultado=getResultadoCovid(o.getKrescovid(), o.getKordensucursal());					
 					if(o.getTipo().equals(1)) {

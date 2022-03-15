@@ -390,6 +390,7 @@ public class ResultadosService {
 			}
 			i++;
 		}
+		/*
 		i = 1;
 		while (i < this.NO_INTENTOS.intValue()) {
 			this.logger.debug("Consulta de WsNova, intento: {}", Integer.valueOf(i));
@@ -407,6 +408,7 @@ public class ResultadosService {
 			}
 			i++;
 		}
+		*/
 		i = 1;
 		while (i < this.NO_INTENTOS.intValue()) {
 			logger.debug("Consulta de WsAzteca, intento: {}", Integer.valueOf(i));
@@ -489,8 +491,8 @@ public class ResultadosService {
 				} catch (Exception e) {
 					logger.error(e.getMessage());
 				}
+				i++;
 			}
-			i++;
 		}
 		fuji = contieneEstudiosDeFuji(tordenSucursal.getKordensucursal());
 		if (fuji.intValue() > 0) {
