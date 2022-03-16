@@ -143,7 +143,8 @@ public class EnvioResultados {
 		EnviaResCovid tmpEnviaResCovid=new EnviaResCovid();
 		EmailFile tmpEmailFile=null;
 		List<EmailFile> files= new ArrayList<EmailFile>();
-		Pattern p = Pattern.compile("^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$");
+		//Pattern p = Pattern.compile("^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$");
+		Pattern p = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		//Set data
 		tmpEmailFile=new EmailFile(emailResultadoCovid.getLabcore()+".pdf", resultado);
 		files.add(tmpEmailFile);
