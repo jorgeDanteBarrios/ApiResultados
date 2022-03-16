@@ -37,15 +37,22 @@ public class EnvioResultados {
 	private EmailClient emailClient;
 	
 	// cada 5 minutos (0/#min)
-	@Scheduled(cron = "0 0/5 * * * *")	
+	@Scheduled(cron = "0 0/5 * * * *")
+	//@Scheduled(cron = "0 */5 * * * *")
+	//@EventListener(ApplicationReadyEvent.class)
 	public Boolean enviaResultadosCovid() {
 		Boolean salida = false;
 		List<EmailResultadoCovid> ordenes = null;
 		String resultado=null;
 		logger.info("---- enviaResultadosCovid [Inicio] ----");
 		ordenes = get_PruebasRapidasCovid();
+		Integer total_ordenes=0;
+		Integer contador=1;
 		if (ordenes != null) {
+			total_ordenes=ordenes.size();
 			for (EmailResultadoCovid o : ordenes) {
+				logger.info("Orden {} de {}", contador,total_ordenes);
+				contador++;
 				try {
 					resultado=getResultadoCovid(o.getKrescovid(), o.getKordensucursal());					
 					if(o.getTipo().equals(1)) {
@@ -136,7 +143,8 @@ public class EnvioResultados {
 		EnviaResCovid tmpEnviaResCovid=new EnviaResCovid();
 		EmailFile tmpEmailFile=null;
 		List<EmailFile> files= new ArrayList<EmailFile>();
-		Pattern p = Pattern.compile("^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$");
+		//Pattern p = Pattern.compile("^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$");
+		Pattern p = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		//Set data
 		tmpEmailFile=new EmailFile(emailResultadoCovid.getLabcore()+".pdf", resultado);
 		files.add(tmpEmailFile);
