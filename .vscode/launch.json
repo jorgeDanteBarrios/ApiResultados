@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ApiResultadosApplication<ApiResultados>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "mx.gda.resultados.ApiResultadosApplication",
+            "projectName": "ApiResultados",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
