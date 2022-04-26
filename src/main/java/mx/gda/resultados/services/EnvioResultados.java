@@ -37,8 +37,7 @@ public class EnvioResultados {
 	private EmailClient emailClient;
 	
 	// cada 5 minutos (0/#min)
-	@Scheduled(cron = "0 0/5 * * * *")
-	//@Scheduled(cron = "0 */5 * * * *")
+	//@Scheduled(cron = "0 0/5 * * * *")	
 	//@EventListener(ApplicationReadyEvent.class)
 	public Boolean enviaResultadosCovid() {
 		Boolean salida = false;

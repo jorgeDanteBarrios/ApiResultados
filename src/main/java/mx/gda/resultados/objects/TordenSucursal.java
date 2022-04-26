@@ -11,7 +11,7 @@ public class TordenSucursal {
 	private Long cestadoRegistro;
 	private Boolean bPatcore;
 	private Boolean bFuji;
-	private List<Long> kmuestras_fuji;
+	private List<MuestraFuji> muestras_fuji;
 	
 	public TordenSucursal() {
 		super();
@@ -86,14 +86,13 @@ public class TordenSucursal {
 		this.csucursal = csucursal;
 	}
 
-	public List<Long> getKmuestras_fuji() {
-		return kmuestras_fuji;
+	public List<MuestraFuji> getMuestras_fuji() {
+		return this.muestras_fuji;
 	}
 
-	public void setKmuestras_fuji(List<Long> kmuestras_fuji) {
-		this.kmuestras_fuji = kmuestras_fuji;
+	public void setMuestras_fuji(List<MuestraFuji> muestras_fuji) {
+		this.muestras_fuji = muestras_fuji;
 	}
-
 	
 	
 }
