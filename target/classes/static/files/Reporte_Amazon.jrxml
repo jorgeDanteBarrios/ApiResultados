@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final using JasperReports Library version 6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Reporte_Amazon" pageWidth="612" pageHeight="792" columnWidth="442" leftMargin="85" rightMargin="85" topMargin="70" bottomMargin="70" uuid="df98cd48-b605-4914-a5ba-a94ea3ef2b6a">
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
+	<parameter name="fecha_toma" class="java.lang.String"/>
+	<parameter name="nombre_medico" class="java.lang.String"/>
+	<parameter name="diagnostico" class="java.lang.String"/>
+	<parameter name="resultado" class="java.lang.String"/>
+	<parameter name="cedula_medico" class="java.lang.String"/>
+	<parameter name="tipo" class="java.lang.String"/>
+	<parameter name="nombre_paciente" class="java.lang.String"/>
+	<parameter name="edad" class="java.lang.String"/>
+	<parameter name="img_base64" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<textField>
+				<reportElement x="220" y="50" width="220" height="20" uuid="664d84d2-0d46-468e-a768-021d7c63a1cf"/>
+				<textElement textAlignment="Right">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecha_toma}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="468" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="160" width="438" height="30" uuid="abf76f64-b9bd-4a4a-a48c-7b5ac29cc3ac"/>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["Que habiendo practicado reconocimiento médico el <style isBold='true'>"+$P{fecha_toma} +"</style> al Sr.(a): <style isBold='true'>"+$P{nombre_paciente}  +", de "+$P{edad} +" años</style> se encontró:"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="207" width="202" height="20" uuid="02e6b0b4-1e82-47f6-908c-705c651de31d"/>
+				<text><![CDATA[PACIENTE INTEGRO FISICAMENTE, CON]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="3" y="240" width="437" height="120" uuid="06d97bcf-a2c2-46ab-9694-bc37f03c754b"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$P{diagnostico}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="398" width="100" height="14" uuid="65480a3e-3e7d-4f63-8cfc-a4ebb10eb327"/>
+				<text><![CDATA[CONCLUSIONES:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="398" width="220" height="14" uuid="278fbf66-4e61-4cdd-a993-001aac578f1e"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{resultado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="20" width="440" height="50" uuid="1bcab819-c708-4984-bfca-e4899194b847"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["El médico cirujano, DR. <style isBold='true'>"+$P{nombre_medico} +"</style> legalmente autorizado por la Dirección General de Profesiones para ejercer la profesión de Médico Cirujano, con cédula profesional número <style isBold='true'>"+ $P{cedula_medico}+"</style>."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="100" width="442" height="30" uuid="ae56c5f8-b3f6-4b48-b39b-fcacf092c4cc"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CERTIFICADO BAJO EL EXAMEN "+$P{tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="370" width="440" height="19" uuid="f6578e10-1bfa-4d8d-9744-4d53b71cb0c5"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Por lo anterior se establece que al Sr(a) <style isBold='true'>"+$P{nombre_medico} +"</style> se considera: "]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="73" splitType="Stretch">
+			<line>
+				<reportElement x="121" y="34" width="200" height="1" uuid="f4c30926-e1b3-4440-be62-da5077694101"/>
+			</line>
+			<textField>
+				<reportElement x="121" y="34" width="200" height="20" uuid="f4c42347-c1e5-4466-a042-a01f8b4a3b05"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nombre_medico}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="55" width="200" height="18" uuid="419ad7b9-d478-41fe-9c5e-86e6c6f4e727"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cedula:"+ $P{cedula_medico}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="140" y="-40" width="159" height="72" uuid="272e2004-27dc-4070-8309-12d90dfe1ffe"/>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( Base64.getDecoder().decode($P{img_base64}))]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+</jasperReport>
