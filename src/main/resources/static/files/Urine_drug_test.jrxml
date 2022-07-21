@@ -29,7 +29,7 @@
 		<band height="93" splitType="Stretch">
 			<image>
 				<reportElement x="2" y="9" width="188" height="81" uuid="1899db96-f035-4eb1-80cb-2ddf6bf1ffec"/>
-				<imageExpression><![CDATA[$P{path_logo}]]></imageExpression>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( Base64.getDecoder().decode($P{path_logo}))]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="380" y="53" width="190" height="37" uuid="081e7351-a507-4131-b402-ec3aeb0b6ed1"/>
@@ -51,7 +51,7 @@ Estudios Clinicos Dr. T.J. Oriard S.A. de C.V]]></text>
 			</staticText>
 			<image>
 				<reportElement x="450" y="0" width="50" height="40" uuid="ba94f130-c1f3-4ebc-9ccc-ba087bd0b5a2"/>
-				<imageExpression><![CDATA[$P{path_frase}]]></imageExpression>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( Base64.getDecoder().decode($P{path_frase}))]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -215,7 +215,7 @@ Estudios Clinicos Dr. T.J. Oriard S.A. de C.V]]></text>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["DRUG OF ABUSE PROFILE 6 IN SALIVA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DRUG OF ABUSE PROFILE 6 (THC, MET,AMP, BAR, BZD, COC) IN URINE"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="3" y="17" width="100" height="13" uuid="1fbfc55c-6612-408a-96c6-a54a21d9ba9c"/>
@@ -223,6 +223,13 @@ Estudios Clinicos Dr. T.J. Oriard S.A. de C.V]]></text>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["AMPHETAMINS"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="30" width="157" height="20" uuid="94dc1090-f683-404d-8b6f-37dba7b0dcb3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Method: LATERAL FLOW CHROMATOGRAPHY WITH IMMUNOASSAY / EMIT"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="250" y="17" width="100" height="13" uuid="f4c6864c-d441-4ee7-a4fe-ac0d8a65363e"/>
@@ -239,229 +246,250 @@ Estudios Clinicos Dr. T.J. Oriard S.A. de C.V]]></text>
 				<textFieldExpression><![CDATA["NEGATIVE"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="10" y="30" width="91" height="10" uuid="3854a5da-0754-4d46-8144-12f0b44e369d"/>
+				<reportElement x="12" y="50" width="91" height="10" uuid="3854a5da-0754-4d46-8144-12f0b44e369d"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Cut: 50 ng/mL"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Cut limit: >= 500 ng/mL"]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="44" width="570" height="1" uuid="fccf6d6b-7ba4-4589-92ef-f929cf14da8e"/>
+				<reportElement x="0" y="63" width="570" height="1" uuid="fccf6d6b-7ba4-4589-92ef-f929cf14da8e"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="3" y="47" width="100" height="13" uuid="39642c59-60f1-4036-98b7-89c3ff4ee22c"/>
+				<reportElement x="3" y="66" width="100" height="13" uuid="39642c59-60f1-4036-98b7-89c3ff4ee22c"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["BARBITURICS"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="252" y="47" width="100" height="13" uuid="d1a32764-eefd-4ba3-b29a-5eb9aa8e65ed"/>
+				<reportElement x="3" y="79" width="157" height="20" uuid="bb6176b5-91ac-4334-9cd1-6330a3649206"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Method: LATERAL FLOW CHROMATOGRAPHY WITH IMMUNOASSAY / EMIT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="99" width="91" height="10" uuid="ca1523e0-1821-43e8-a434-07df0f6cb30d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cut limit: >= 200 ng/mL"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="66" width="100" height="13" uuid="d1a32764-eefd-4ba3-b29a-5eb9aa8e65ed"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{resul_BAR}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="442" y="47" width="100" height="13" uuid="53e5e720-5b33-4f6d-afda-cbe380fca94a"/>
+				<reportElement x="442" y="66" width="100" height="13" uuid="53e5e720-5b33-4f6d-afda-cbe380fca94a"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NEGATIVE"]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="1" y="74" width="570" height="1" uuid="126aa300-1383-4b00-bc3c-c53c9236243a"/>
+				<reportElement x="1" y="111" width="570" height="1" uuid="126aa300-1383-4b00-bc3c-c53c9236243a"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="3" y="77" width="100" height="13" uuid="7696f181-b089-4f49-9a9e-f00ec323a449"/>
+				<reportElement x="3" y="114" width="100" height="13" uuid="7696f181-b089-4f49-9a9e-f00ec323a449"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["BENZODIAZEPINES"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="253" y="77" width="100" height="13" uuid="6db69907-bbdb-4668-98d7-16a180790148"/>
+				<reportElement x="253" y="114" width="100" height="13" uuid="6db69907-bbdb-4668-98d7-16a180790148"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{resul_BZD}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="443" y="77" width="100" height="13" uuid="b19a539d-a277-48cf-9ec8-515acf2fdabc"/>
+				<reportElement x="443" y="114" width="100" height="13" uuid="b19a539d-a277-48cf-9ec8-515acf2fdabc"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NEGATIVE"]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="3" y="127" width="157" height="20" uuid="68eb61cb-faca-450a-aec7-27a7754c9bb2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Method: LATERAL FLOW CHROMATOGRAPHY WITH IMMUNOASSAY / EMIT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="12" y="147" width="91" height="10" uuid="58b64b04-cbc2-405b-8e4c-b99d59184ad7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cut limit: >= 200 ng/mL"]]></textFieldExpression>
+			</textField>
 			<line>
-				<reportElement x="2" y="104" width="570" height="1" uuid="1e334433-8439-433c-a6d0-0e984f3e1fcd"/>
+				<reportElement x="2" y="159" width="570" height="1" uuid="1e334433-8439-433c-a6d0-0e984f3e1fcd"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="4" y="107" width="100" height="13" uuid="8dc808b3-cc83-490c-b214-3bc76a31029d"/>
+				<reportElement x="4" y="163" width="100" height="13" uuid="8dc808b3-cc83-490c-b214-3bc76a31029d"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["MARIJUANA"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="254" y="107" width="100" height="13" uuid="19d4ac0b-562c-443c-9295-a46c81beec1c"/>
+				<reportElement x="254" y="163" width="100" height="13" uuid="19d4ac0b-562c-443c-9295-a46c81beec1c"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{resul_THC}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="444" y="107" width="100" height="13" uuid="a5503bb4-4b54-4126-95b1-1dbf2a8ef2cf"/>
+				<reportElement x="444" y="163" width="100" height="13" uuid="a5503bb4-4b54-4126-95b1-1dbf2a8ef2cf"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NEGATIVE"]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="4" y="176" width="157" height="20" uuid="a83d3fca-23f0-4852-9068-d04822b155c5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Method: LATERAL FLOW CHROMATOGRAPHY WITH IMMUNOASSAY / EMIT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="196" width="91" height="10" uuid="686259e9-5fed-4e2b-aedd-9208102e0526"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cut limit: >= 50 ng/mL"]]></textFieldExpression>
+			</textField>
 			<line>
-				<reportElement x="3" y="134" width="570" height="1" uuid="aac33479-a4c3-4dc9-bb7a-49d3e17888ff"/>
+				<reportElement x="3" y="208" width="570" height="1" uuid="aac33479-a4c3-4dc9-bb7a-49d3e17888ff"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="4" y="137" width="100" height="13" uuid="9e3b6ffd-8cbf-445c-93d8-5abaf4986c9b"/>
+				<reportElement x="4" y="211" width="100" height="13" uuid="9e3b6ffd-8cbf-445c-93d8-5abaf4986c9b"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["COCAINE"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="254" y="137" width="100" height="13" uuid="90fae8b4-bb40-488e-bc81-b396f1748f8a"/>
+				<reportElement x="254" y="211" width="100" height="13" uuid="90fae8b4-bb40-488e-bc81-b396f1748f8a"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{resul_COC}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="444" y="137" width="100" height="13" uuid="66f25c76-ad02-4f3c-9c93-801ba17598fc"/>
+				<reportElement x="444" y="211" width="100" height="13" uuid="66f25c76-ad02-4f3c-9c93-801ba17598fc"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NEGATIVE"]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="4" y="224" width="157" height="20" uuid="12a9b3ec-2fed-422f-a9c3-2ed054808505"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Method: LATERAL FLOW CHROMATOGRAPHY WITH IMMUNOASSAY / EMIT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="244" width="91" height="10" uuid="1b0189a3-10a2-4bc5-aa4e-f4fdb9f45e8a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cut limit: >= 150 ng/mL"]]></textFieldExpression>
+			</textField>
 			<line>
-				<reportElement x="3" y="163" width="570" height="1" uuid="35b04d1e-a170-4a43-aa0b-d9ad9a872dc6"/>
+				<reportElement x="3" y="256" width="570" height="1" uuid="35b04d1e-a170-4a43-aa0b-d9ad9a872dc6"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="4" y="167" width="100" height="13" uuid="d445725e-17b2-4db1-82fe-4eefd224cbeb"/>
+				<reportElement x="4" y="260" width="100" height="13" uuid="d445725e-17b2-4db1-82fe-4eefd224cbeb"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["METHAMPHETAMINES"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="255" y="167" width="100" height="13" uuid="42382b02-c184-4768-965f-fd93db3d182a"/>
+				<reportElement x="255" y="260" width="100" height="13" uuid="42382b02-c184-4768-965f-fd93db3d182a"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{resul_MET}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="445" y="167" width="100" height="13" uuid="68705d60-a5bd-4376-8747-027360b6460c"/>
+				<reportElement x="445" y="260" width="100" height="13" uuid="68705d60-a5bd-4376-8747-027360b6460c"/>
 				<textElement verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA["NEGATIVE"]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="4" y="273" width="157" height="20" uuid="b2e80699-467a-4477-84d3-06259609c77b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Method: LATERAL FLOW CHROMATOGRAPHY WITH IMMUNOASSAY / EMIT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="13" y="293" width="91" height="10" uuid="d15245c6-6651-44cd-ab73-8fd9336f5e76"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cut limit: >= 500 ng/mL"]]></textFieldExpression>
+			</textField>
 			<line>
-				<reportElement x="4" y="195" width="570" height="1" uuid="651407cd-0225-4c54-a80f-a2ffd9589263"/>
+				<reportElement x="4" y="305" width="570" height="1" uuid="651407cd-0225-4c54-a80f-a2ffd9589263"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="4" y="200" width="183" height="10" uuid="baae205b-e167-4a54-8229-6f9cf0007e2f"/>
+				<reportElement x="30" y="310" width="157" height="10" uuid="baae205b-e167-4a54-8229-6f9cf0007e2f"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Method: IMMUNOASSAY       SAMPLE: SALIVA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["SAMPLE: URINE"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="4" y="210" width="176" height="10" uuid="a19c5b16-a12d-4b7d-a4d9-63c85fc3ef96"/>
+				<reportElement x="3" y="320" width="177" height="10" uuid="a19c5b16-a12d-4b7d-a4d9-63c85fc3ef96"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Sample reception: "+$P{fecha_liberacion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="180" y="210" width="177" height="10" uuid="e11bdb37-0577-44ed-8e93-243da8628fc7"/>
+				<reportElement x="180" y="320" width="177" height="10" uuid="e11bdb37-0577-44ed-8e93-243da8628fc7"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Release: " +$P{fecha_liberacion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="357" y="210" width="177" height="10" uuid="a5b23eea-7573-49f3-ae80-e638bfa4f366"/>
+				<reportElement x="357" y="320" width="177" height="10" uuid="a5b23eea-7573-49f3-ae80-e638bfa4f366"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Released by: Q. SANDRA SANTOS ALTAMIRANO"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="4" y="230" width="556" height="10" uuid="34550845-911d-47c7-b0db-d99b61cf44d3"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["* This study provides a preliminary analytical test result. A presumptive positive result must be confirmed by another specific method  such as Gas Chromatography / Mass Spectrometry (GC / MS)."]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="4" y="240" width="556" height="10" uuid="e761a003-625f-4b6c-a008-ac9dbf617b44"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["In compliance with NMX-EC-15189-IMNC-2015, you can request the result in the International System of Units when applicable for your interpretation or some special purpose."]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="10" y="60" width="91" height="10" uuid="8daf39ff-554d-414c-a4ac-31aa20932ca2"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["."]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="10" y="90" width="91" height="10" uuid="4a0271b7-4126-4cd8-b793-798e79d8cad8"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Cut: 10 ng/mL"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="10" y="120" width="91" height="10" uuid="e98852e4-1498-47e9-9e7e-3e6d0a9c7f5b"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Cut: 12 ng/mL"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="10" y="150" width="91" height="10" uuid="f0f59241-ecf5-45ef-a08f-a98dcf766876"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Cut: 20 ng/mL"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="10" y="180" width="91" height="10" uuid="b2d76fcf-2b5b-4b74-9f90-25ca07e93369"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Cut: 50 ng/mL"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -485,7 +513,7 @@ Estudios Clinicos Dr. T.J. Oriard S.A. de C.V]]></text>
 			</textField>
 			<image>
 				<reportElement x="480" y="43" width="90" height="37" uuid="61046151-3e5b-4460-bfd5-c268beac295b"/>
-				<imageExpression><![CDATA[$P{path_gda}]]></imageExpression>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( Base64.getDecoder().decode($P{path_gda}))]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="180" y="1" width="340" height="42" uuid="e45817d3-0e6a-4559-8044-b175794273bc"/>
@@ -506,7 +534,7 @@ Professional license 5192096]]></text>
 			</staticText>
 			<image>
 				<reportElement x="56" y="-30" width="54" height="49" uuid="1e5ea08a-87ff-48db-a0dc-97375acadc78"/>
-				<imageExpression><![CDATA[$P{path_firma}]]></imageExpression>
+				<imageExpression><![CDATA[new java.io.ByteArrayInputStream( Base64.getDecoder().decode($P{path_firma}))]]></imageExpression>
 			</image>
 		</band>
 	</pageFooter>

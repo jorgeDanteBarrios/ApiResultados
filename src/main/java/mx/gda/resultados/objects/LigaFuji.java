@@ -7,7 +7,6 @@ public class LigaFuji {
 
 	public LigaFuji() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public LigaFuji(String estudio, String url) {

@@ -15,7 +15,6 @@ public class EmailResultadoCovid {
 
 	public EmailResultadoCovid() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public EmailResultadoCovid(String krescovid, Integer marca, Long korden, Long kordensucursal, String paciente,

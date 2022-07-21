@@ -7,7 +7,6 @@ public class EmailFile {
 
 	public EmailFile() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public EmailFile(String name, String contentBase64) {

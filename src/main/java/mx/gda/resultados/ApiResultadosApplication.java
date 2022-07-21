@@ -1,6 +1,7 @@
 package mx.gda.resultados;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -8,16 +9,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.servers.Server;
 
 @SpringBootApplication
 @EnableScheduling
-@EnableSwagger2   //tag to enable swagger
 public class ApiResultadosApplication {
 
 	@Value("${info.app.version}")
@@ -26,6 +25,12 @@ public class ApiResultadosApplication {
 	private String APP_NAME;
 	@Value("${info.app.description}")
 	private String APP_DESCRIPTION;
+	@Value("${info.app.organization}")
+	private String ORGANIZATION_NAME;
+	@Value("${info.app.organization.url}")
+	private String ORGANIZATION_URL;
+	@Value("${app.ssl.url}")
+	private String APP_SSL_URL;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(ApiResultadosApplication.class, args);
@@ -33,26 +38,35 @@ public class ApiResultadosApplication {
 
 	/*  configuration bean for swagger properties */
 	@Bean
-	public Docket swaggerConfiguration() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.paths(PathSelectors.ant("/ApiResultados/**"))     //take  the methods of the path
-				.apis(RequestHandlerSelectors.basePackage("mx.gda"))  //take only the models used in this package
-				.build()
-				.apiInfo(myApiDetails());
+	public OpenAPI springShopOpenAPI() {
+		Contact gdaContact = new Contact();
+		gdaContact.email("marco.sosa@gda.mx");
+		gdaContact.setName("Arquitectura TI");
+		if (APP_SSL_URL == null || APP_SSL_URL.isEmpty()) {
+			return new OpenAPI()
+					.info(new Info()
+							.title(APP_NAME)
+							.description(APP_DESCRIPTION)
+							.version(APP_VERSION)
+							.contact(gdaContact)
+							.license(new License().name(ORGANIZATION_NAME)
+									.url(ORGANIZATION_URL)
+									)
+							);
+		}
+		List<Server> s = new ArrayList<>();
+		Server tmpServer = new Server();
+		tmpServer.setUrl(APP_SSL_URL);
+		s.add(tmpServer);
+		return new OpenAPI()
+				.info(new Info()
+						.title(APP_NAME)
+						.description(APP_DESCRIPTION)
+						.version(APP_VERSION)
+						.contact(gdaContact)
+						.license(
+								new License().name(ORGANIZATION_NAME).url(ORGANIZATION_URL)))
+				.servers(s);
 	}
-	
-	/* Overwrite apiInfo for set our information  */
-	private ApiInfo myApiDetails() {
-		return new ApiInfo(
-				APP_NAME,   //title
-				APP_DESCRIPTION,           //description
-				APP_VERSION,				  //version
-				null,//"API constructed for GDA, use internal only", //termsOfServiceUrl
-				new springfox.documentation.service.Contact("Equipo de Desarrollo de TI",null, "marco.sosa@gda.mx"),   //name,url, email
-				"Grupo Diagnóstico Aries",        //license
-				"https://grupodiagnosticoaries.com/",  		//licenseUrl
-				Collections.emptyList()						//vendorExtensions
-				);
-	}
+
 }

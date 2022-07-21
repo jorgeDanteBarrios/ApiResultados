@@ -21,7 +21,6 @@ public class EnviaResCovid {
 
 	public EnviaResCovid() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getKordensucursal() {

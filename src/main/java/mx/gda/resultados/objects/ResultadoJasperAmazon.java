@@ -25,7 +25,6 @@ public class ResultadoJasperAmazon {
 
 	public ResultadoJasperAmazon() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ResultadoJasperAmazon(String ordenLabcore, String paciente, String doctor, String kordensucursal,

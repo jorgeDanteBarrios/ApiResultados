@@ -7,7 +7,6 @@ public class Orden {
 	
 	public Orden() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Orden(String orden, String nombrePx) {

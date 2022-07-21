@@ -52,7 +52,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	  public CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration corsConfiguration = new CorsConfiguration();
 	    corsConfiguration.setAllowCredentials(Boolean.valueOf(true));
-	    //corsConfiguration.addAllowedOrigin("*");
 	    corsConfiguration.addAllowedOriginPattern("*");
 	    corsConfiguration.addAllowedHeader("*");
 	    corsConfiguration.addAllowedMethod("*");

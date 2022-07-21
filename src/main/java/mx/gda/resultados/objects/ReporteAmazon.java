@@ -14,7 +14,6 @@ public class ReporteAmazon {
 
 	public ReporteAmazon() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ReporteAmazon(String nombre_paciente, String edad_paciente, String tipo, String fecha_toma,
